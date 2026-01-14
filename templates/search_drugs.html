@@ -1,0 +1,535 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h2 class="card-title text-center mb-4">Medicine Search</h2>
+                    <div class="search-container mb-4">
+                        <div class="input-group">
+                            <input type="text" id="searchInput" class="form-control form-control-lg" 
+                                   placeholder="Search for medicines..." aria-label="Search">
+                            <div class="input-group-append">
+                                <button class="btn btn-primary" type="button" id="searchButton">
+                                    <i class="fas fa-search"></i> Search
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Filters Section -->
+                    <div class="filters mb-4" id="filterSection" style="display: none;">
+                        <div class="row">
+                            <div class="col-md-4">
+                                <select class="form-select" id="stockFilter">
+                                    <option value="">All Stock Status</option>
+                                    <option value="in_stock">In Stock</option>
+                                    <option value="out_of_stock">Out of Stock</option>
+                                </select>
+                            </div>
+                            <div class="col-md-4">
+                                <select class="form-select" id="categoryFilter">
+                                    <option value="">All Categories</option>
+                                </select>
+                            </div>
+                            <div class="col-md-4">
+                                <select class="form-select" id="sortBy">
+                                    <option value="relevance">Sort by Relevance</option>
+                                    <option value="price_low">Price: Low to High</option>
+                                    <option value="price_high">Price: High to Low</option>
+                                    <option value="name">Name A-Z</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Loading Spinner -->
+                    <div id="loadingSpinner" class="text-center" style="display: none;">
+                        <div class="spinner-border text-primary" role="status">
+                            <span class="visually-hidden">Loading...</span>
+                        </div>
+                        <p class="mt-2">Searching medicines...</p>
+                    </div>
+
+                    <!-- Results Section -->
+                    <div id="searchResults" class="row g-4">
+                        <!-- Results will be dynamically inserted here -->
+                    </div>
+
+                    <!-- No Results Message -->
+                    <div id="noResults" class="text-center mt-4" style="display: none;">
+                        <div class="alert alert-info">
+                            <h4><i class="fas fa-info-circle"></i> No medicines found</h4>
+                            <p>Try adjusting your search terms or filters</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Result Card Template -->
+<template id="medicineCardTemplate">
+    <div class="col-md-6 col-lg-4">
+        <div class="card h-100 medicine-card">
+            <div class="card-header bg-transparent d-flex justify-content-between align-items-center">
+                <span class="badge stock-status"></span>
+                <small class="text-muted category-badge"></small>
+            </div>
+            <div class="card-body d-flex flex-column">
+                <div class="medicine-image-container text-center mb-3">
+                    <img src="" alt="Medicine" class="medicine-thumbnail img-fluid">
+                </div>
+                <h5 class="card-title medicine-name"></h5>
+                <p class="card-text medicine-price text-success fw-bold"></p>
+                <div class="medicine-details flex-grow-1">
+                    <div class="mb-2">
+                        <small class="text-muted">Storage:</small>
+                        <p class="storage-info small mb-1"></p>
+                    </div>
+                    <div class="mb-2">
+                        <small class="text-muted">Allergy:</small>
+                        <p class="allergy-info small mb-1"></p>
+                    </div>
+                </div>
+            </div>
+            <div class="card-footer bg-transparent">
+                <button class="btn btn-primary btn-sm w-100 view-details">
+                    <i class="fas fa-info-circle"></i> View Details
+                </button>
+            </div>
+        </div>
+    </div>
+</template>
+
+<!-- Medicine Details Modal -->
+<div class="modal fade" id="medicineDetailsModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    <i class="fas fa-pills"></i> Medicine Details
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="medicine-image mb-3 text-center">
+                            <img src="" alt="Medicine" class="img-fluid rounded" style="max-height: 200px;">
+                        </div>
+                    </div>
+                    <div class="col-md-8">
+                        <h4 id="modalMedicineName" class="mb-3 text-primary"></h4>
+                        <div class="row mb-3">
+                            <div class="col-6">
+                                <strong>English Name:</strong>
+                                <p id="modalMedicineNameEn" class="mb-2"></p>
+                            </div>
+                            <div class="col-6">
+                                <strong>Arabic Name:</strong>
+                                <p id="modalMedicineNameAr" dir="rtl" class="mb-2"></p>
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-6">
+                                <strong>Price:</strong>
+                                <p id="modalMedicinePrice" class="text-success fw-bold"></p>
+                            </div>
+                            <div class="col-6">
+                                <strong>Stock Status:</strong>
+                                <p id="modalMedicineStock"></p>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <strong>Category:</strong>
+                            <p id="modalMedicineCategory"></p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Detailed Information Tabs -->
+                <ul class="nav nav-tabs" id="medicineDetailsTabs" role="tablist">
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link active" id="storage-tab" data-bs-toggle="tab" data-bs-target="#storage" type="button">
+                            <i class="fas fa-warehouse"></i> Storage & Allergy
+                        </button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="pregnancy-tab" data-bs-toggle="tab" data-bs-target="#pregnancy" type="button">
+                            <i class="fas fa-baby"></i> Pregnancy Info
+                        </button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="food-tab" data-bs-toggle="tab" data-bs-target="#food" type="button">
+                            <i class="fas fa-utensils"></i> Food Interactions
+                        </button>
+                    </li>
+                </ul>
+                
+                <div class="tab-content mt-3" id="medicineDetailsTabContent">
+                    <div class="tab-pane fade show active" id="storage" role="tabpanel">
+                        <div class="mb-3">
+                            <strong>Storage Instructions:</strong>
+                            <p id="modalStorageInfo" class="mt-2"></p>
+                        </div>
+                        <div class="mb-3">
+                            <strong>Allergy Information:</strong>
+                            <p id="modalAllergyInfo" class="mt-2"></p>
+                        </div>
+                    </div>
+                    
+                    <div class="tab-pane fade" id="pregnancy" role="tabpanel">
+                        <div class="mb-3">
+                            <strong>Pregnancy Information:</strong>
+                            <div id="modalPregnancyInfo" class="mt-2"></div>
+                        </div>
+                        <div class="mb-3">
+                            <strong>Warnings:</strong>
+                            <div id="modalPregnancyWarnings" class="mt-2"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="tab-pane fade" id="food" role="tabpanel">
+                        <div class="mb-3">
+                            <strong>Food Interactions:</strong>
+                            <div id="modalFoodInteractions" class="mt-2"></div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="mt-4 pt-3 border-top">
+                    <strong>Source:</strong>
+                    <p><a id="modalShareLink" href="#" target="_blank" class="btn btn-outline-primary btn-sm">
+                        <i class="fas fa-external-link-alt"></i> View on Source Website
+                    </a></p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const searchInput = document.getElementById('searchInput');
+    const searchButton = document.getElementById('searchButton');
+    const resultsContainer = document.getElementById('searchResults');
+    const loadingSpinner = document.getElementById('loadingSpinner');
+    const noResults = document.getElementById('noResults');
+    const filterSection = document.getElementById('filterSection');
+    const stockFilter = document.getElementById('stockFilter');
+    const categoryFilter = document.getElementById('categoryFilter');
+    const sortBy = document.getElementById('sortBy');
+    const medicineDetailsModal = new bootstrap.Modal(document.getElementById('medicineDetailsModal'));
+
+    let debounceTimer;
+    let allResults = [];
+
+    // Search function with debounce
+    function performSearch() {
+        clearTimeout(debounceTimer);
+        debounceTimer = setTimeout(() => {
+            const query = searchInput.value.trim();
+            if (query.length < 2) {
+                alert('Please enter at least 2 characters to search');
+                return;
+            }
+
+            loadingSpinner.style.display = 'block';
+            resultsContainer.innerHTML = '';
+            noResults.style.display = 'none';
+            filterSection.style.display = 'none';
+
+            fetch(`/api/search_drugs?query=${encodeURIComponent(query)}`)
+                .then(response => response.json())
+                .then(data => {
+                    allResults = data;
+                    loadingSpinner.style.display = 'none';
+                    
+                    if (data.length > 0) {
+                        filterSection.style.display = 'block';
+                        populateFilters(data);
+                        displayResults(data);
+                    } else {
+                        noResults.style.display = 'block';
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    loadingSpinner.style.display = 'none';
+                    noResults.style.display = 'block';
+                });
+        }, 300);
+    }
+
+    // Populate filter options
+    function populateFilters(results) {
+        const categories = [...new Set(results.map(item => item.category).filter(Boolean))];
+        categoryFilter.innerHTML = '<option value="">All Categories</option>';
+        categories.forEach(category => {
+            const option = document.createElement('option');
+            option.value = category;
+            option.textContent = category;
+            categoryFilter.appendChild(option);
+        });
+    }
+
+    // Display results with template
+    function displayResults(results) {
+        resultsContainer.innerHTML = '';
+        if (results.length === 0) {
+            noResults.style.display = 'block';
+            return;
+        }
+
+        const template = document.getElementById('medicineCardTemplate');
+        results.forEach(medicine => {
+            const clone = template.content.cloneNode(true);
+            
+            // Update card content
+            clone.querySelector('.medicine-name').textContent = medicine.name || 'Unknown Medicine';
+            clone.querySelector('.medicine-price').textContent = `$${(medicine.price || 0).toFixed(2)}`;
+            clone.querySelector('.category-badge').textContent = medicine.category || '';
+            
+            // Stock status
+            const stockStatus = (medicine.stock || 0) > 0 ? 'In Stock' : 'Out of Stock';
+            const stockBadge = clone.querySelector('.stock-status');
+            stockBadge.textContent = stockStatus;
+            stockBadge.classList.add((medicine.stock || 0) > 0 ? 'bg-success' : 'bg-danger');
+
+            // Medicine image
+            const imageEl = clone.querySelector('.medicine-thumbnail');
+            imageEl.src = medicine.image || '/static/images/default-medicine.png';
+            imageEl.alt = medicine.name || 'Medicine';
+            imageEl.style.maxHeight = '80px';
+
+            // Storage and allergy info
+            clone.querySelector('.storage-info').textContent = medicine.storage_info || 'No storage information available';
+            clone.querySelector('.allergy-info').textContent = medicine.allergy_info || 'No allergy information available';
+
+            // Add click handler for view details
+            const viewDetailsBtn = clone.querySelector('.view-details');
+            viewDetailsBtn.addEventListener('click', () => showMedicineDetails(medicine));
+
+            resultsContainer.appendChild(clone);
+        });
+    }
+
+    // Show medicine details in modal
+    function showMedicineDetails(medicine) {
+        document.getElementById('modalMedicineName').textContent = medicine.name || 'Unknown Medicine';
+        document.getElementById('modalMedicineNameEn').textContent = medicine.name_en || medicine.name || 'N/A';
+        document.getElementById('modalMedicineNameAr').textContent = medicine.name_ar || 'غير متوفر';
+        document.getElementById('modalMedicinePrice').textContent = `$${(medicine.price || 0).toFixed(2)}`;
+        document.getElementById('modalMedicineStock').textContent = (medicine.stock || 0) > 0 ? 'In Stock' : 'Out of Stock';
+        document.getElementById('modalMedicineCategory').textContent = medicine.category || 'N/A';
+        
+        // Storage and allergy information
+        document.getElementById('modalStorageInfo').textContent = medicine.storage_info || 'No storage information available';
+        document.getElementById('modalAllergyInfo').textContent = medicine.allergy_info || 'No allergy information available';
+        
+        // Pregnancy information
+        const pregnancyInfo = medicine.pregnancy_info || {};
+        const pregnancyDiv = document.getElementById('modalPregnancyInfo');
+        const warningsDiv = document.getElementById('modalPregnancyWarnings');
+        
+        if (pregnancyInfo.error) {
+            pregnancyDiv.innerHTML = `<div class="alert alert-warning">${pregnancyInfo.error}</div>`;
+            warningsDiv.innerHTML = '';
+        } else {
+            pregnancyDiv.innerHTML = pregnancyInfo.pregnancy ? 
+                `<div class="alert alert-info">${pregnancyInfo.pregnancy}</div>` : 
+                '<p class="text-muted">No pregnancy information available</p>';
+            warningsDiv.innerHTML = pregnancyInfo.warnings ? 
+                `<div class="alert alert-warning">${pregnancyInfo.warnings}</div>` : 
+                '<p class="text-muted">No warnings available</p>';
+        }
+        
+        // Food interactions
+        const foodInteractions = medicine.food_interactions || {};
+        const foodDiv = document.getElementById('modalFoodInteractions');
+        
+        if (foodInteractions.error) {
+            foodDiv.innerHTML = `<div class="alert alert-warning">${foodInteractions.error}</div>`;
+        } else if (foodInteractions.interactions && foodInteractions.interactions.length > 0) {
+            const interactionsList = foodInteractions.interactions.map(interaction => 
+                `<li class="mb-2">${interaction}</li>`
+            ).join('');
+            foodDiv.innerHTML = `<ul class="list-unstyled">${interactionsList}</ul>`;
+        } else {
+            foodDiv.innerHTML = '<p class="text-muted">No food interactions found</p>';
+        }
+
+        // Medicine image
+        const modalImage = document.querySelector('.medicine-image img');
+        modalImage.src = medicine.image || '/static/images/default-medicine.png';
+        modalImage.alt = medicine.name || 'Medicine';
+
+        // Share link
+        const shareLink = document.getElementById('modalShareLink');
+        shareLink.href = medicine.share_link || '#';
+        shareLink.style.display = medicine.share_link ? 'inline-block' : 'none';
+
+        medicineDetailsModal.show();
+    }
+
+    // Event listeners
+    searchInput.addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') {
+            performSearch();
+        }
+    });
+    searchButton.addEventListener('click', performSearch);
+
+    // Filter and sort event listeners
+    [stockFilter, categoryFilter, sortBy].forEach(filter => {
+        filter.addEventListener('change', () => {
+            let filtered = [...allResults];
+
+            // Apply stock filter
+            if (stockFilter.value) {
+                filtered = filtered.filter(item => {
+                    if (stockFilter.value === 'in_stock') return (item.stock || 0) > 0;
+                    if (stockFilter.value === 'out_of_stock') return (item.stock || 0) === 0;
+                    return true;
+                });
+            }
+
+            // Apply category filter
+            if (categoryFilter.value) {
+                filtered = filtered.filter(item => item.category === categoryFilter.value);
+            }
+
+            // Apply sorting
+            switch (sortBy.value) {
+                case 'price_low':
+                    filtered.sort((a, b) => (a.price || 0) - (b.price || 0));
+                    break;
+                case 'price_high':
+                    filtered.sort((a, b) => (b.price || 0) - (a.price || 0));
+                    break;
+                case 'name':
+                    filtered.sort((a, b) => (a.name || '').localeCompare(b.name || ''));
+                    break;
+            }
+
+            displayResults(filtered);
+        });
+    });
+});
+</script>
+
+<style>
+.medicine-card {
+    transition: transform 0.2s, box-shadow 0.2s;
+    border: none;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.medicine-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 16px rgba(0,0,0,0.15);
+}
+
+.card-header {
+    border-bottom: none;
+    padding-bottom: 0;
+}
+
+.badge {
+    font-size: 0.75rem;
+    padding: 0.5em 0.75em;
+}
+
+.category-badge {
+    background-color: #e9ecef;
+    padding: 0.25rem 0.5rem;
+    border-radius: 0.375rem;
+    font-size: 0.75rem;
+}
+
+.card-title {
+    margin-bottom: 1rem;
+    color: #2c3e50;
+    font-weight: 600;
+    font-size: 1.1rem;
+}
+
+.medicine-price {
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+}
+
+.medicine-details {
+    font-size: 0.85rem;
+    color: #6c757d;
+}
+
+.medicine-thumbnail {
+    max-width: 100%;
+    border-radius: 0.375rem;
+}
+
+.search-container {
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.filters {
+    background-color: #f8f9fa;
+    padding: 1.5rem;
+    border-radius: 0.5rem;
+    margin-bottom: 2rem;
+}
+
+#searchInput {
+    border-radius: 0.5rem 0 0 0.5rem;
+}
+
+#searchButton {
+    border-radius: 0 0.5rem 0.5rem 0;
+}
+
+.form-select {
+    border-radius: 0.375rem;
+}
+
+.spinner-border {
+    width: 3rem;
+    height: 3rem;
+}
+
+.nav-tabs .nav-link {
+    color: #6c757d;
+    border: none;
+    border-bottom: 2px solid transparent;
+}
+
+.nav-tabs .nav-link.active {
+    color: #0d6efd;
+    border-bottom-color: #0d6efd;
+    background: none;
+}
+
+.tab-content {
+    min-height: 200px;
+}
+
+@media (max-width: 768px) {
+    .filters .col-md-4 {
+        margin-bottom: 1rem;
+    }
+    
+    .modal-dialog {
+        margin: 1rem;
+    }
+}
+</style>
+{% endblock %}

@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Medicine Interaction Tester</title>
+    <link rel="stylesheet" href="/static/styles.css">
+</head>
+<body>
+    <h1>Medicine Interaction Tester</h1>
+    <form id="interaction-form" method="post" action="/">
+        <label for="medicine1">Medicine 1:</label>
+        <input type="text" id="medicine1" name="medicine1" placeholder="Enter first medicine" required><br><br>
+        
+        <label for="medicine2">Medicine 2:</label>
+        <input type="text" id="medicine2" name="medicine2" placeholder="Enter second medicine" required><br><br>
+
+        <button type="submit">Check Interaction</button>
+    </form>
+
+    <div id="result">
+        {% if prediction %}
+            <p><strong>Medicine 1:</strong> {{ med1 }}</p>
+            <p><strong>Medicine 2:</strong> {{ med2 }}</p>
+            <p><strong>Result:</strong> {{ prediction }}</p>
+        {% endif %}
+    </div>
+</body>
+</html>

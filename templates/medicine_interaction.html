@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+
+{% block title %}Medicine Interaction Tester{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h1>Medicine Interaction Tester</h1>
+    <form id="interaction-form" method="post">
+        <div class="mb-3">
+            <label for="medicine1" class="form-label">Medicine 1:</label>
+            <input type="text" id="medicine1" name="medicine1" class="form-control" placeholder="Enter first medicine" required>
+        </div>
+        <div class="mb-3">
+            <label for="medicine2" class="form-label">Medicine 2:</label>
+            <input type="text" id="medicine2" name="medicine2" class="form-control" placeholder="Enter second medicine" required>
+        </div>
+        <button type="submit" class="btn btn-primary">Check Interaction</button>
+    </form>
+
+    <div id="result" class="mt-4">
+        <!-- Prediction result will be displayed here -->
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    document.getElementById('interaction-form').addEventListener('submit', function (event) {
+        event.preventDefault(); // Prevent the form from submitting traditionally
+
+        // Get the form data
+        const medicine1 = document.getElementById('medicine1').value;
+        const medicine2 = document.getElementById('medicine2').value;
+
+        // Make an AJAX request to the /predict API
+        fetch('http://localhost:5050/predict', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: medicine1=${encodeURIComponent(medicine1)}&medicine2=${encodeURIComponent(medicine2)}
+        })
+        .then(response => response.json()) // Parse the JSON response
+        .then(data => {
+            // Display the prediction result
+            const resultDiv = document.getElementById('result');
+            if (data.error) {
+                resultDiv.innerHTML = <div class="alert alert-danger">${data.error}</div>;
+            } else {
+                resultDiv.innerHTML = `
+                    <div class="alert alert-success">
+                        <p><strong>Medicine 1:</strong> ${data.medicine1}</p>
+                        <p><strong>Medicine 2:</strong> ${data.medicine2}</p>
+                        <p><strong>Interaction:</strong> ${data.interaction}</p>
+                    </div>
+                `;
+            }
+        })
+        .catch(error => {
+            // Handle any errors
+            const resultDiv = document.getElementById('result');
+            resultDiv.innerHTML = <div class="alert alert-danger">Error: ${error.message}</div>;
+        });
+    });
+</script>
+{% endblock %}

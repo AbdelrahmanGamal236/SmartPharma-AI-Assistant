@@ -1,0 +1,133 @@
+{% extends "base.html" %}
+
+{% block title %}Review Prescription - Admin{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>Review Prescription</h2>
+        <a href="{{ url_for('admin_prescriptions') }}" class="btn btn-outline-primary">
+            <i class="fas fa-arrow-left me-2"></i>Back to Prescriptions
+        </a>
+    </div>
+
+    <div class="row">
+        <!-- Prescription Details -->
+        <div class="col-md-8">
+            <div class="card shadow-sm mb-4">
+                <div class="card-body">
+                    <h5 class="card-title mb-4">Prescription Details</h5>
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold">Patient Name</label>
+                            <p>{{ prescription.user.first_name }} {{ prescription.user.last_name }}</p>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold">Email</label>
+                            <p>{{ prescription.user.email }}</p>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold">Upload Date</label>
+                            <p>{{ prescription.upload_date.strftime('%Y-%m-%d %H:%M') }}</p>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold">Current Status</label>
+                            <div>
+                                {% if prescription.status == 'pending' %}
+                                <span class="badge bg-warning text-dark">Pending Review</span>
+                                {% elif prescription.status == 'approved' %}
+                                <span class="badge bg-success">Approved</span>
+                                {% else %}
+                                <span class="badge bg-danger">Rejected</span>
+                                {% endif %}
+                            </div>
+                        </div>
+                        {% if prescription.message %}
+                        <div class="col-12">
+                            <label class="form-label fw-bold">Patient Message</label>
+                            <p>{{ prescription.message }}</p>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Prescription File -->
+            <div class="card shadow-sm mb-4">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h5 class="card-title mb-0">Prescription File</h5>
+                        <a href="{{ url_for('download_prescription', prescription_id=prescription.id) }}" 
+                           class="btn btn-primary btn-sm">
+                            <i class="fas fa-download me-2"></i>Download File
+                        </a>
+                    </div>
+                    <div class="prescription-file">
+                        {% if prescription.original_filename.lower().endswith(('.jpg', '.jpeg', '.png')) %}
+                        <div class="text-center">
+                            <img src="{{ url_for('serve_upload', filename=prescription.filename) }}" 
+                                 class="img-fluid rounded" alt="Prescription Image"
+                                 style="max-height: 600px; width: auto;">
+                        </div>
+                        {% else %}
+                        <div class="text-center p-4 border rounded">
+                            <i class="fas fa-file-pdf fa-3x text-danger mb-3"></i>
+                            <h6>{{ prescription.original_filename }}</h6>
+                            <p class="text-muted small mb-0">PDF Document</p>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Review Form -->
+        <div class="col-md-4">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title mb-4">Review Decision</h5>
+                    <form action="{{ url_for('update_prescription_status', prescription_id=prescription.id) }}" method="POST">
+                        <div class="mb-4">
+                            <label class="form-label">Update Status</label>
+                            <select class="form-select form-select-lg mb-3" name="status" required>
+                                <option value="pending" {% if prescription.status == 'pending' %}selected{% endif %}>
+                                    Pending Review
+                                </option>
+                                <option value="approved" {% if prescription.status == 'approved' %}selected{% endif %}>
+                                    Approve Prescription
+                                </option>
+                                <option value="rejected" {% if prescription.status == 'rejected' %}selected{% endif %}>
+                                    Reject Prescription
+                                </option>
+                            </select>
+                        </div>
+
+                        <div class="mb-4">
+                            <label class="form-label">Admin Notes</label>
+                            <textarea class="form-control" name="admin_notes" rows="5" 
+                                    placeholder="Add your review notes here...">{{ prescription.admin_notes or '' }}</textarea>
+                        </div>
+
+                        {% if prescription.review_date %}
+                        <div class="mb-4">
+                            <label class="form-label">Last Review Date</label>
+                            <input type="text" class="form-control" 
+                                   value="{{ prescription.review_date.strftime('%Y-%m-%d %H:%M') }}" readonly>
+                        </div>
+                        {% endif %}
+
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-primary btn-lg">
+                                <i class="fas fa-save me-2"></i>Save Review
+                            </button>
+                            <a href="{{ url_for('admin_prescriptions') }}" class="btn btn-outline-secondary">
+                                Cancel
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

@@ -1,0 +1,207 @@
+{% extends "base.html" %}
+
+{% block title %}Admin Dashboard - Pharmacy App{% endblock %}
+
+{% block content %}
+<div class="admin-dashboard-container">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>Manage Medications</h2>
+        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addMedicationModal">
+            <i class="fas fa-plus me-2"></i>Add New Medication
+        </button>
+    </div>
+
+    <!-- Medications Table -->
+    <div class="card shadow-sm">
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Name</th>
+                            <th>Category</th>
+                            <th>Price</th>
+                            <th>Allergy Test</th>
+                            <th>Storage Instructions</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for medication in medications %}
+                        <tr>
+                            <td>{{ medication.id }}</td>
+                            <td>{{ medication.name }}</td>
+                            <td><span class="badge bg-info">{{ medication.category|title }}</span></td>
+                            <td>${{ "%.2f"|format(medication.price) }}</td>
+                            <td>
+                                {% if medication.allergy_test_required %}
+                                <span class="badge bg-warning text-dark">Required</span>
+                                {% else %}
+                                <span class="badge bg-success">Not Required</span>
+                                {% endif %}
+                            </td>
+                            <td>{{ medication.storage_instructions }}</td>
+                            <td>
+                                <button class="btn btn-sm btn-outline-primary me-1" 
+                                        onclick="editMedication({
+                                            id: {{ medication.id }},
+                                            name: '{{ medication.name }}',
+                                            category: '{{ medication.category }}',
+                                            price: {{ medication.price }},
+                                            allergy_test_required: {{ medication.allergy_test_required|tojson }},
+                                            storage_instructions: '{{ medication.storage_instructions|replace("'", "\\'") }}'
+                                        })">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                                <a href="{{ url_for('delete_medication', id=medication.id) }}" 
+                                   class="btn btn-sm btn-outline-danger" 
+                                   onclick="return confirm('Are you sure you want to delete this medication?')">
+                                    <i class="fas fa-trash"></i>
+                                </a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Add Medication Modal -->
+<div class="modal fade" id="addMedicationModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Add New Medication</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form id="addMedicationForm" method="POST" action="{{ url_for('add_medication') }}">
+                    <div class="mb-3">
+                        <label for="name" class="form-label">Medication Name</label>
+                        <input type="text" class="form-control" id="name" name="name" required>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="category" class="form-label">Category</label>
+                        <select class="form-select" id="category" name="category" required>
+                            <option value="antibiotics" selected>Antibiotics - Common drugs</option>
+                            <option value="anesthetics">Local Anesthetics - Pain relief</option>
+                            <option value="chemotherapy">Chemotherapy - Cancer treatment</option>
+                            <option value="biologics">Biologics - Specialty drugs</option>
+                        </select>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="price" class="form-label">Price ($)</label>
+                        <input type="number" step="0.01" class="form-control" id="price" name="price" required>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <div class="form-check">
+                            <input type="checkbox" class="form-check-input" id="allergyTest" name="allergy_test_required">
+                            <label class="form-check-label" for="allergyTest">Allergy Test Required</label>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="storage" class="form-label">Storage Instructions</label>
+                        <textarea class="form-control" id="storage" name="storage_instructions" rows="3"></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="submit" form="addMedicationForm" class="btn btn-primary">Add Medication</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Edit Medication Modal -->
+<div class="modal fade" id="editMedicationModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Edit Medication</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form id="editMedicationForm" method="POST">
+                    <input type="hidden" id="editId" name="id">
+                    <div class="mb-3">
+                        <label for="editName" class="form-label">Medication Name</label>
+                        <input type="text" class="form-control" id="editName" name="name" required>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="editCategory" class="form-label">Category</label>
+                        <select class="form-select" id="editCategory" name="category" required>
+                            <option value="antibiotics">Antibiotics - Common drugs</option>
+                            <option value="anesthetics">Local Anesthetics - Pain relief</option>
+                            <option value="chemotherapy">Chemotherapy - Cancer treatment</option>
+                            <option value="biologics">Biologics - Specialty drugs</option>
+                        </select>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="editPrice" class="form-label">Price ($)</label>
+                        <input type="number" step="0.01" class="form-control" id="editPrice" name="price" required>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <div class="form-check">
+                            <input type="checkbox" class="form-check-input" id="editAllergyTest" name="allergy_test_required">
+                            <label class="form-check-label" for="editAllergyTest">Allergy Test Required</label>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="editStorage" class="form-label">Storage Instructions</label>
+                        <textarea class="form-control" id="editStorage" name="storage_instructions" rows="3"></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="submit" form="editMedicationForm" class="btn btn-primary">Save Changes</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+function editMedication(medication) {
+    const form = document.getElementById('editMedicationForm');
+    const modal = new bootstrap.Modal(document.getElementById('editMedicationModal'));
+    
+    // Set form action
+    form.action = `/admin/medications/edit/${medication.id}`;
+    
+    // Fill form fields
+    document.getElementById('editId').value = medication.id;
+    document.getElementById('editName').value = medication.name;
+    document.getElementById('editCategory').value = medication.category;
+    document.getElementById('editPrice').value = medication.price;
+    document.getElementById('editAllergyTest').checked = medication.allergy_test_required;
+    document.getElementById('editStorage').value = medication.storage_instructions;
+    
+    modal.show();
+}
+
+// Add event listeners to close modals after form submission
+document.getElementById('addMedicationForm').addEventListener('submit', function() {
+    const modal = bootstrap.Modal.getInstance(document.getElementById('addMedicationModal'));
+    setTimeout(() => modal.hide(), 500);
+});
+
+document.getElementById('editMedicationForm').addEventListener('submit', function() {
+    const modal = bootstrap.Modal.getInstance(document.getElementById('editMedicationModal'));
+    setTimeout(() => modal.hide(), 500);
+});
+</script>
+{% endblock %} 

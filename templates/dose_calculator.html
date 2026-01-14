@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Advanced Dose Calculator</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="{{ url_for('static', filename='style.css') }}" rel="stylesheet">
+</head>
+<body>
+    <div class="dose-calculator-app">
+        <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+            <div class="container">
+                <a class="navbar-brand" href="#">
+                    <i class="fas fa-pills me-2"></i>
+                    Advanced Dose Calculator
+                </a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav ms-auto">
+                        <li class="nav-item">
+                            <a class="nav-link" href="#calculator">Calculator</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#patients">Patient Records</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+
+        <div class="container mt-4">
+            <!-- Header Section -->
+            <div class="row mb-4">
+                <div class="col-12">
+                    <div class="alert alert-info">
+                        <i class="fas fa-info-circle me-2"></i>
+                        <strong>AI-Powered Dose Calculator:</strong> This system uses Documents from WHO And Google's Gemini AI to provide evidence-based drug dosing recommendations. Always consult with a healthcare professional before administering any medication.
+                    </div>
+                </div>
+            </div>
+
+            <!-- Flash Messages -->
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <div class="alert alert-{{ 'danger' if category == 'error' else category }} alert-dismissible fade show">
+                            {{ message }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+
+            <!-- Dose Calculator Form -->
+            <div id="calculator" class="card mb-5">
+                <div class="card-header bg-primary text-white">
+                    <h3 class="mb-0">
+                        <i class="fas fa-calculator me-2"></i>
+                        Drug Dose Calculator
+                    </h3>
+                </div>
+                <div class="card-body">
+                    <form method="POST">
+                        {{ form.hidden_tag() }}
+                        
+                        <div class="row">
+                            <!-- Patient Information -->
+                            <div class="col-md-6">
+                                <h5 class="text-primary mb-3">
+                                    <i class="fas fa-user me-2"></i>Patient Information
+                                </h5>
+                                
+                                <div class="mb-3">
+                                    {{ form.name.label(class="form-label") }}
+                                    {{ form.name(class="form-control") }}
+                                    {% if form.name.errors %}
+                                        <div class="text-danger small">{{ form.name.errors[0] }}</div>
+                                    {% endif %}
+                                </div>
+                                
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            {{ form.age.label(class="form-label") }}
+                                            {{ form.age(class="form-control") }}
+                                            {% if form.age.errors %}
+                                                <div class="text-danger small">{{ form.age.errors[0] }}</div>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            {{ form.weight.label(class="form-label") }}
+                                            {{ form.weight(class="form-control") }}
+                                            {% if form.weight.errors %}
+                                                <div class="text-danger small">{{ form.weight.errors[0] }}</div>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="mb-3">
+                                    {{ form.height.label(class="form-label") }}
+                                    <small class="text-muted">(Optional)</small>
+                                    {{ form.height(class="form-control") }}
+                                </div>
+                            </div>
+                            
+                            <!-- Medical Information -->
+                            <div class="col-md-6">
+                                <h5 class="text-primary mb-3">
+                                    <i class="fas fa-stethoscope me-2"></i>Medical Information
+                                </h5>
+                                
+                                <div class="mb-3">
+                                    {{ form.medical_condition.label(class="form-label") }}
+                                    {{ form.medical_condition(class="form-select") }}
+                                </div>
+                                
+                                <div class="mb-3">
+                                    {{ form.drug_name.label(class="form-label") }}
+                                    {{ form.drug_name(class="form-control") }}
+                                    <div class="form-text">Enter generic or brand name (e.g., Acetaminophen, Tylenol)</div>
+                                    {% if form.drug_name.errors %}
+                                        <div class="text-danger small">{{ form.drug_name.errors[0] }}</div>
+                                    {% endif %}
+                                </div>
+                                
+                                <div class="mb-3">
+                                    {{ form.severity.label(class="form-label") }}
+                                    {{ form.severity(class="form-select") }}
+                                </div>
+                                
+                                <div class="mb-3">
+                                    {{ form.allergies.label(class="form-label") }}
+                                    {{ form.allergies(class="form-control", rows="3") }}
+                                    <div class="form-text">List any known drug allergies or sensitivities</div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-12">
+                                <div class="mb-3">
+                                    {{ form.notes.label(class="form-label") }}
+                                    {{ form.notes(class="form-control", rows="3") }}
+                                    <div class="form-text">Any additional medical information or special considerations</div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-primary btn-lg">
+                                <i class="fas fa-calculator me-2"></i>
+                                Calculate Dose with AI
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Patient Records -->
+            <div id="patients" class="card">
+                <div class="card-header bg-secondary text-white">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h3 class="mb-0">
+                            <i class="fas fa-history me-2"></i>
+                            Patient Records
+                        </h3>
+                        <div>
+                            <button class="btn btn-outline-light btn-sm" onclick="exportData()">
+                                <i class="fas fa-download me-1"></i>Export
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    {% if patients %}
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead class="table-dark">
+                                    <tr>
+                                        <th>Patient</th>
+                                        <th>Age/Weight</th>
+                                        <th>Condition</th>
+                                        <th>Drug</th>
+                                        <th>Calculated Dose</th>
+                                        <th>Form</th>
+                                        <th>Frequency</th>
+                                        <th>Date</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <!-- In the Patient Records section (dose_calculator.html) -->
+                                    {% for patient in patients %}
+                                        <tr>
+                                            <td>
+                                                <strong>{{ patient.name }}</strong>
+                                                {% if patient.allergies %}
+                                                    <br><small class="text-danger">
+                                                        <i class="fas fa-exclamation-triangle"></i> Allergies
+                                                    </small>
+                                                {% endif %}
+                                            </td>
+                                            <td>
+                                                {{ patient.age }}y / {{ patient.weight }}kg
+                                                {% if patient.height %}
+                                                    <br><small class="text-muted">{{ patient.height }}cm</small>
+                                                {% endif %}
+                                            </td>
+                                            <td>
+                                                <span class="badge bg-info">{{ patient.medical_condition.replace('_', ' ').title() }}</span>
+                                                <br><small class="text-muted">{{ patient.severity.title() }}</small>
+                                            </td>
+                                            <td><strong>{{ patient.drug_name }}</strong></td>
+                                            <td>
+                                                <strong class="text-success">{{ patient.result }}</strong>
+                                            </td>
+                                            <td>{{ patient.dose_form or 'N/A' }}</td>
+                                            <td>{{ patient.frequency or 'N/A' }}</td>
+                                            <td>
+                                                <small>{{ patient.created_at.strftime('%Y-%m-%d %H:%M') if patient.created_at else 'N/A' }}</small>
+                                            </td>
+                                            <td>
+                                                <!-- Use pid in the link for patient detail -->
+                                                <a href="{{ url_for('dose_calculator_patient_detail', pid=patient.id) }}" class="btn btn-sm btn-outline-primary">
+                                                    <i class="fas fa-eye"></i> View
+                                                </a>
+                                            </td>
+                                        </tr>
+                                    {% endfor %}
+
+                                </tbody>
+                            </table>
+                        </div>
+                    {% else %}
+                        <div class="text-center py-5">
+                            <i class="fas fa-folder-open fa-3x text-muted mb-3"></i>
+                            <h5 class="text-muted">No patient records found</h5>
+                            <p class="text-muted">Calculate your first dose to see records here.</p>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <footer class="bg-dark text-white mt-5 py-4">
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-8">
+                        <h6>Medical Disclaimer</h6>
+                        <p class="small mb-0">
+                            This dose calculator is for educational and informational purposes only. 
+                            It should not replace professional medical advice, diagnosis, or treatment. 
+                            Always consult with qualified healthcare professionals before making medical decisions.
+                        </p>
+                    </div>
+                    <div class="col-md-4 text-md-end">
+                        <p class="small mb-0">
+                            Powered by <strong>Google Gemini AI</strong><br>
+                            Advanced Dose Calculator v2.0
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Custom JavaScript -->
+    <script>
+        // Auto-dismiss alerts after 5 seconds
+        setTimeout(function() {
+            const alerts = document.querySelectorAll('.alert:not(.alert-info)');
+            alerts.forEach(alert => {
+                if (alert.querySelector('.btn-close')) {
+                    alert.querySelector('.btn-close').click();
+                }
+            });
+        }, 5000);
+
+        // Export functionality
+        function exportData() {
+            fetch('/export-patients')
+                .then(response => response.json())
+                .then(data => {
+                    const dataStr = JSON.stringify(data, null, 2);
+                    const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
+                    
+                    const exportFileDefaultName = 'patient_records_' + new Date().toISOString().split('T')[0] + '.json';
+                    
+                    const linkElement = document.createElement('a');
+                    linkElement.setAttribute('href', dataUri);
+                    linkElement.setAttribute('download', exportFileDefaultName);
+                    linkElement.click();
+                })
+                .catch(error => {
+                    console.error('Export error:', error);
+                    alert('Error exporting data. Please try again.');
+                });
+        }
+
+        // Drug name autocomplete suggestions (placeholder for future enhancement)
+        document.getElementById('drug_name').addEventListener('input', function(e) {
+            const query = e.target.value;
+            if (query.length > 2) {
+                // Future: Implement autocomplete suggestions from drug database
+                console.log('Searching for:', query);
+            }
+        });
+
+        // Form validation enhancements
+        document.querySelector('form').addEventListener('submit', function(e) {
+            const drugName = document.getElementById('drug_name').value.trim();
+            if (drugName.length < 2) {
+                e.preventDefault();
+                alert('Please enter a valid drug name (at least 2 characters).');
+                return false;
+            }
+            
+            // Show loading state
+            const submitBtn = e.target.querySelector('button[type="submit"]');
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Calculating...';
+            submitBtn.disabled = true;
+        });
+    </script>
+</body>
+</html>

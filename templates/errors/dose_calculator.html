@@ -1,0 +1,73 @@
+{% extends 'base.html' %}
+{% block title %}Dose Calculator{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/dose_calculator.css') }}">
+{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2 class="mb-4">Dose Calculator</h2>
+    <form method="POST">
+        {{ form.hidden_tag() }}
+        <div class="row g-3">
+            <div class="col-md-6">{{ form.name.label(class="form-label") }}{{ form.name(class="form-control") }}</div>
+            <div class="col-md-3">{{ form.age.label(class="form-label") }}{{ form.age(class="form-control") }}</div>
+            <div class="col-md-3">{{ form.weight.label(class="form-label") }}{{ form.weight(class="form-control") }}</div>
+            <div class="col-md-3">{{ form.height.label(class="form-label") }}{{ form.height(class="form-control") }}</div>
+            <div class="col-md-4">{{ form.medical_condition.label(class="form-label") }}{{ form.medical_condition(class="form-select") }}</div>
+            <div class="col-md-4">{{ form.drug_name.label(class="form-label") }}{{ form.drug_name(class="form-control") }}</div>
+            <div class="col-md-4">{{ form.severity.label(class="form-label") }}{{ form.severity(class="form-select") }}</div>
+            <div class="col-12">{{ form.allergies.label(class="form-label") }}{{ form.allergies(class="form-control", rows="2") }}</div>
+            <div class="col-12">{{ form.notes.label(class="form-label") }}{{ form.notes(class="form-control", rows="2") }}</div>
+        </div>
+        <button type="submit" class="btn btn-primary mt-3">Calculate Dose</button>
+    </form>
+
+    {% if result %}
+    <hr>
+    <h4>Calculation Result</h4>
+    <ul class="list-group">
+        <li class="list-group-item"><strong>Dose:</strong> {{ result.calculated_dose or result["calculated_dose"] }}</li>
+        <li class="list-group-item"><strong>Form:</strong> {{ result.dose_form or result["dose_form"] }}</li>
+        <li class="list-group-item"><strong>Frequency:</strong> {{ result.frequency or result["frequency"] }}</li>
+        <li class="list-group-item"><strong>Duration:</strong> {{ result.duration or result["duration"] }}</li>
+        <li class="list-group-item"><strong>Instructions:</strong> {{ result.instructions or result["instructions"] }}</li>
+        <li class="list-group-item"><strong>Warnings:</strong> {{ result.warnings or result["warnings"] }}</li>
+    </ul>
+    {% endif %}
+
+    {% if patients %}
+    <hr id="patients">
+    <h4 class="mt-4">Recent Calculations</h4>
+    <table class="table table-striped align-middle">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Drug</th>
+                <th>Dose</th>
+                <th>Date</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for p in patients %}
+            <tr>
+                <td>{{ p.id }}</td>
+                <td>{{ p.name }}</td>
+                <td>{{ p.drug_name }}</td>
+                <td>{{ p.result.calculated_dose if p.result else '' }}</td>
+                <td>{{ p.created_at.strftime('%Y-%m-%d %H:%M') }}</td>
+                <td>
+                    <a class="btn btn-sm btn-outline-primary" href="{{ url_for('dose_calculator_patient_detail', pid=p.id) }}">
+                        View
+                    </a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% endif %}
+</div>
+{% endblock %}

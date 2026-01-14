@@ -1,0 +1,37 @@
+{% extends 'base.html' %}
+{% block title %}Patient Details{% endblock %}
+{% block content %}
+<div class="container mt-4">
+    <a class="btn btn-outline-secondary mb-3" href="{{ url_for('dose_calculator_page') }}">
+        &larr; Back to Calculator
+    </a>
+    <div class="card">
+        <div class="card-header bg-primary text-white">
+            <h4 class="mb-0"><i class="fas fa-user-injured me-2"></i>{{ patient.name }}</h4>
+        </div>
+        <div class="card-body">
+            <div class="row mb-3">
+                <div class="col-md-3"><strong>Age:</strong> {{ patient.age }}</div>
+                <div class="col-md-3"><strong>Weight:</strong> {{ patient.weight }} kg</div>
+                <div class="col-md-3"><strong>Height:</strong> {{ patient.height }} cm</div>
+                <div class="col-md-3"><strong>Severity:</strong> {{ patient.severity }}</div>
+            </div>
+            <div class="row mb-3">
+                <div class="col-md-6"><strong>Medical Condition:</strong> {{ patient.medical_condition }}</div>
+                <div class="col-md-6"><strong>Drug:</strong> {{ patient.drug_name }}</div>
+            </div>
+            <hr>
+            <h5>Dose Recommendation</h5>
+            <ul class="list-group mb-3">
+                <li class="list-group-item"><strong>Dose:</strong> {{ patient.result.calculated_dose }}</li>
+                <li class="list-group-item"><strong>Form:</strong> {{ patient.result.dose_form }}</li>
+                <li class="list-group-item"><strong>Frequency:</strong> {{ patient.result.frequency }}</li>
+                <li class="list-group-item"><strong>Duration:</strong> {{ patient.result.duration }}</li>
+                <li class="list-group-item"><strong>Instructions:</strong> {{ patient.result.instructions }}</li>
+                <li class="list-group-item"><strong>Warnings:</strong> {{ patient.result.warnings }}</li>
+            </ul>
+            <p class="text-muted">Calculated on {{ patient.created_at.strftime('%Y-%m-%d %H:%M') }}</p>
+        </div>
+    </div>
+</div>
+{% endblock %}

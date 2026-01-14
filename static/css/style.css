@@ -1,0 +1,1768 @@
+/* Global Styles */
+:root {
+    --primary-color: #2D82b5;
+    --primary-light: #88CDF6;
+    --primary-dark: #015C92;
+    --secondary-color: #E9C46A;
+    --background-color: #F8F9FA;
+    --card-color: #FFFFFF;
+    --text-color: #2D3748;
+    --text-muted: #718096;
+    --border-radius: 16px;
+    --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+body {
+    font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    background-color: var(--background-color);
+    color: var(--text-color);
+    line-height: 1.5;
+}
+
+/* Onboarding Page */
+.onboarding-container {
+    min-height: 100vh;
+    background: linear-gradient(135deg, var(--primary-color), var(--primary-light));
+    padding: 2rem;
+    display: flex;
+    align-items: center;
+    margin: -1.5rem;
+}
+
+.onboarding-text {
+    color: white;
+    padding: 2rem;
+}
+
+.onboarding-text h1 {
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin-bottom: 1.5rem;
+}
+
+.onboarding-text p {
+    font-size: 1.25rem;
+    opacity: 0.9;
+    margin-bottom: 2rem;
+}
+
+.get-started-btn {
+    background-color: white !important;
+    color: var(--primary-color) !important;
+    padding: 1rem 2rem !important;
+    border-radius: 50px !important;
+    font-size: 1.1rem !important;
+    font-weight: 600 !important;
+    border: none !important;
+    transition: all 0.3s ease !important;
+}
+
+.get-started-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+/* Cards and Components */
+.card {
+    border: none;
+    border-radius: var(--border-radius);
+    background: var(--card-color);
+    box-shadow: var(--shadow);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+}
+
+.form-control {
+    border: 1px solid #E2E8F0;
+    border-radius: 12px;
+    padding: 0.75rem 1rem;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+}
+
+.form-control:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(42, 157, 143, 0.1);
+}
+
+.input-group-text {
+    background-color: #F7FAFC;
+    border: 1px solid #E2E8F0;
+    border-radius: 12px 0 0 12px;
+    padding: 0.75rem;
+}
+
+/* Dashboard Cards */
+.category-card {
+    margin-bottom: 1.5rem;
+}
+
+.category-card .card {
+    padding: 1.5rem;
+    text-align: center;
+    min-height: 160px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.category-card .card-icon {
+    width: 48px;
+    height: 48px;
+    margin: 0 auto 1rem;
+    background: rgba(42, 157, 143, 0.1);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--primary-color);
+}
+
+.category-card h5 {
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+}
+
+/* Search Bar */
+.search-bar {
+    background: white;
+    border-radius: var(--border-radius);
+    padding: 0.5rem;
+    margin-bottom: 2rem;
+    box-shadow: var(--shadow);
+}
+
+.search-bar .input-group {
+    background: #F7FAFC;
+    border-radius: 12px;
+    padding: 0.5rem;
+}
+
+.search-bar .form-control {
+    border: none;
+    background: transparent;
+}
+
+.search-bar .input-group-text {
+    border: none;
+    background: transparent;
+}
+
+/* Upload Area */
+.upload-area {
+    border: 2px dashed #CBD5E0;
+    border-radius: var(--border-radius);
+    padding: 2rem;
+    text-align: center;
+    background: #F7FAFC;
+    transition: all 0.3s ease;
+}
+
+.upload-area.highlight {
+    border-color: var(--primary-color);
+    background: rgba(42, 157, 143, 0.05);
+}
+
+.upload-area i {
+    font-size: 3rem;
+    color: var(--primary-color);
+    margin-bottom: 1rem;
+}
+
+/* Buttons */
+.btn {
+    padding: 0.75rem 1.5rem;
+    border-radius: 12px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.btn-primary {
+    background-color: var(--primary-color);
+    border-color: var(--primary-color);
+}
+
+.btn-primary:hover {
+    background-color: var(--primary-dark);
+    border-color: var(--primary-dark);
+    transform: translateY(-1px);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .onboarding-container {
+        padding: 1rem;
+    }
+
+    .onboarding-text {
+        text-align: center;
+        padding: 1rem;
+    }
+
+    .onboarding-text h1 {
+        font-size: 2rem;
+    }
+
+    .card {
+        margin-bottom: 1rem;
+    }
+
+    .category-card .card {
+        min-height: 140px;
+    }
+}
+
+/* Navigation */
+.navbar {
+    background-color: var(--primary-color) !important;
+    padding: 1rem 0;
+}
+
+.navbar-brand {
+    font-weight: 700;
+    font-size: 1.5rem;
+}
+
+.nav-link {
+    font-weight: 500;
+    padding: 0.5rem 1rem !important;
+    transition: all 0.3s ease;
+}
+
+.nav-link:hover {
+    opacity: 0.8;
+}
+
+/* Medication Cards */
+.medication-card {
+    margin-bottom: 1.5rem;
+}
+
+.medication-card .card {
+    padding: 1.5rem;
+}
+
+.medication-card .card-title {
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+}
+
+.badge {
+    padding: 0.5rem 1rem;
+    border-radius: 50px;
+    font-weight: 500;
+}
+
+/* Auth Pages */
+.auth-container {
+    min-height: calc(100vh - 76px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem 1rem;
+    background: linear-gradient(135deg, rgba(42, 157, 143, 0.1), rgba(79, 179, 169, 0.1));
+}
+
+.auth-container .card {
+    width: 100%;
+    border-radius: 20px;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+}
+
+.auth-container .card-body {
+    padding: 2.5rem;
+}
+
+.auth-container h2 {
+    color: var(--text-color);
+    font-weight: 700;
+    margin-bottom: 2rem;
+}
+
+.auth-container .form-label {
+    font-weight: 500;
+    color: var(--text-color);
+    margin-bottom: 0.5rem;
+}
+
+.auth-container .input-group {
+    border-radius: 12px;
+    overflow: hidden;
+    background: white;
+    border: 1px solid #E2E8F0;
+    transition: all 0.3s ease;
+}
+
+.auth-container .input-group:focus-within {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(42, 157, 143, 0.1);
+}
+
+.auth-container .input-group-text {
+    background-color: white;
+    border: none;
+    border-right: 1px solid #E2E8F0;
+    color: #718096;
+    padding: 0.75rem 1rem;
+}
+
+.auth-container .form-control {
+    border: none;
+    padding: 0.75rem 1rem;
+    font-size: 1rem;
+    background: white;
+}
+
+.auth-container .form-control:focus {
+    box-shadow: none;
+}
+
+.auth-container .btn-primary {
+    padding: 0.75rem 1.5rem;
+    font-weight: 600;
+    font-size: 1rem;
+}
+
+.auth-container .divider {
+    display: flex;
+    align-items: center;
+    text-align: center;
+    color: #718096;
+    font-size: 0.9rem;
+    margin: 1.5rem 0;
+}
+
+.auth-container .divider::before,
+.auth-container .divider::after {
+    content: '';
+    flex: 1;
+    border-bottom: 1px solid #E2E8F0;
+    margin: 0 1rem;
+}
+
+.auth-container .social-login {
+    margin-top: 1.5rem;
+}
+
+.auth-container .social-login button {
+    position: relative;
+    text-align: center;
+    padding: 0.75rem 1rem;
+    font-weight: 500;
+    border: 1px solid #E2E8F0;
+    transition: all 0.3s ease;
+}
+
+.auth-container .social-login button:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.auth-container .social-login img,
+.auth-container .social-login i {
+    position: absolute;
+    left: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .auth-container {
+        padding: 1rem;
+    }
+    
+    .auth-container .card-body {
+        padding: 1.5rem;
+    }
+}
+
+/* Password toggle button */
+.auth-container .btn-outline-secondary {
+    border: none;
+    background: transparent;
+    color: #718096;
+    padding: 0 1rem;
+}
+
+.auth-container .btn-outline-secondary:hover,
+.auth-container .btn-outline-secondary:focus {
+    background: transparent;
+    color: var(--primary-color);
+}
+
+/* Login specific styles */
+.auth-container .form-check-input {
+    width: 1.1em;
+    height: 1.1em;
+    margin-top: 0.2em;
+    border-color: #CBD5E0;
+    cursor: pointer;
+}
+
+.auth-container .form-check-input:checked {
+    background-color: var(--primary-color);
+    border-color: var(--primary-color);
+}
+
+.auth-container .form-check-label {
+    font-size: 0.95rem;
+    cursor: pointer;
+}
+
+.auth-container a {
+    text-decoration: none;
+    color: var(--primary-color);
+    transition: color 0.3s ease;
+}
+
+.auth-container a:hover {
+    color: var(--primary-dark);
+}
+
+/* Welcome text styles */
+.auth-container h2 {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--text-color);
+    margin-bottom: 0.5rem;
+}
+
+.auth-container .text-muted {
+    color: #718096 !important;
+}
+
+/* Social login button improvements */
+.auth-container .social-login button {
+    height: 48px;
+    font-size: 0.95rem;
+    border-radius: 12px;
+    background: white;
+    position: relative;
+    overflow: hidden;
+}
+
+.auth-container .social-login button:hover {
+    background: #f8fafc;
+}
+
+.auth-container .social-login button img {
+    width: 20px;
+    height: 20px;
+    object-fit: contain;
+}
+
+/* Input field focus states */
+.auth-container .input-group:focus-within {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(42, 157, 143, 0.1);
+}
+
+/* Button hover states */
+.auth-container .btn-primary:hover {
+    background-color: var(--primary-dark);
+    border-color: var(--primary-dark);
+    transform: translateY(-1px);
+}
+
+/* Responsive text adjustments */
+@media (max-width: 768px) {
+    .auth-container h2 {
+        font-size: 1.75rem;
+    }
+    
+    .auth-container p {
+        font-size: 0.95rem;
+    }
+    
+    .auth-container .social-login button {
+        height: 44px;
+        font-size: 0.9rem;
+    }
+}
+
+/* Landing Page Styles */
+.landing-container {
+    padding: 2rem 0;
+}
+
+/* Hero Section */
+.hero-section {
+    padding: 4rem 20px;
+    background: linear-gradient(135deg, rgba(42, 157, 143, 0.1), rgba(79, 179, 169, 0.1));
+    border-radius: 20px;
+    margin-bottom: 4rem;
+}
+
+.hero-section h1 {
+    color: var(--text-color);
+    font-weight: 800;
+    line-height: 1.2;
+    margin-bottom: 1.5rem;
+}
+
+.hero-section .lead {
+    font-size: 1.2rem;
+    color: var(--text-muted);
+    margin-bottom: 2rem;
+}
+
+.hero-image {
+    max-width: 80%;
+    height: auto;
+    margin: 0 auto;
+    display: block;
+    animation: float 6s ease-in-out infinite;
+}
+
+@keyframes float {
+    0% {
+        transform: translateY(0px);
+    }
+    50% {
+        transform: translateY(-20px);
+    }
+    100% {
+        transform: translateY(0px);
+    }
+}
+
+/* Feature Cards */
+.feature-icon {
+    width: 64px;
+    height: 64px;
+    border-radius: 16px;
+    background: rgba(42, 157, 143, 0.1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto;
+    color: var(--primary-color);
+    font-size: 1.5rem;
+    transition: all 0.3s ease;
+}
+
+.card:hover .feature-icon {
+    background: var(--primary-color);
+    color: white;
+    transform: translateY(-5px);
+}
+
+/* Step Numbers */
+.step-number {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: rgba(42, 157, 143, 0.1);
+    color: var(--primary-color);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto;
+    font-weight: 600;
+    font-size: 1.2rem;
+    transition: all 0.3s ease;
+}
+
+.card:hover .step-number {
+    background: var(--primary-color);
+    color: white;
+    transform: scale(1.1);
+}
+
+/* CTA Section */
+.cta-section .card {
+    border-radius: 20px;
+    overflow: hidden;
+    border: none;
+}
+
+.cta-section .card-body {
+    background: linear-gradient(135deg, var(--primary-color), var(--primary-light));
+}
+
+.cta-section .btn-light {
+    color: var(--primary-color);
+    font-weight: 600;
+    padding: 0.8rem 2rem;
+    transition: all 0.3s ease;
+}
+
+.cta-section .btn-light:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+/* Section Headings */
+.features-section h2,
+.how-it-works-section h2 {
+    font-weight: 700;
+    color: var(--text-color);
+    margin-bottom: 2rem;
+}
+
+/* Card Hover Effects */
+.card {
+    transition: all 0.3s ease;
+    border: none;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+    .hero-section {
+        padding: 2rem 1rem;
+        text-align: center;
+    }
+
+    .hero-section h1 {
+        font-size: 2.5rem;
+    }
+
+    .hero-section .lead {
+        font-size: 1.1rem;
+    }
+
+    .hero-image {
+        max-width: 60%;
+        margin-top: 2rem;
+    }
+
+    .feature-icon {
+        width: 56px;
+        height: 56px;
+        font-size: 1.3rem;
+    }
+}
+
+/* Dashboard Styles */
+.dashboard-container {
+    padding: 1.5rem 0;
+}
+
+/* Category Cards */
+.category-card {
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border: 2px solid transparent;
+}
+
+.category-card:hover {
+    transform: translateY(-5px);
+    border-color: var(--primary-color);
+}
+
+.category-card.active {
+    border-color: var(--primary-color);
+    background-color: rgba(42, 157, 143, 0.05);
+}
+
+.category-card .card-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    background: rgba(42, 157, 143, 0.1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.25rem;
+    color: var(--primary-color);
+    transition: all 0.3s ease;
+}
+
+.category-card:hover .card-icon,
+.category-card.active .card-icon {
+    background: var(--primary-color);
+    color: white;
+}
+
+/* Search Bar */
+.search-bar {
+    background: white;
+    border-radius: var(--border-radius);
+    padding: 0.5rem;
+    box-shadow: var(--shadow);
+    margin-bottom: 2rem;
+}
+
+.search-bar .input-group {
+    background: #F7FAFC;
+    border-radius: 12px;
+    padding: 0.5rem;
+}
+
+.search-bar .form-control {
+    border: none;
+    background: transparent;
+    font-size: 1rem;
+    padding: 0.5rem 1rem;
+}
+
+.search-bar .form-control:focus {
+    box-shadow: none;
+}
+
+/* Medication Cards */
+.medication-item .card {
+    transition: all 0.3s ease;
+}
+
+.medication-item .card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+}
+
+.medication-item .badge {
+    padding: 0.5rem 1rem;
+    font-weight: 500;
+}
+
+/* Details Modal */
+.medication-details h4 {
+    color: var(--primary-color);
+    font-weight: 600;
+}
+
+.medication-details label {
+    color: var(--text-color);
+    margin-bottom: 0.5rem;
+}
+
+.medication-details p {
+    color: var(--text-muted);
+}
+
+/* Sort Dropdown */
+.dropdown-menu {
+    border: none;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    border-radius: 12px;
+    padding: 0.5rem;
+}
+
+.dropdown-item {
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    transition: all 0.2s ease;
+}
+
+.dropdown-item:hover {
+    background-color: rgba(42, 157, 143, 0.1);
+    color: var(--primary-color);
+}
+
+/* Dashboard Page Specific Styles */
+/* Dashboard Header */
+.dashboard-header {
+    background: linear-gradient(135deg, var(--primary-color), var(--primary-light));
+    color: white;
+    padding: 2rem 0;
+    border-radius: var(--border-radius);
+    margin-bottom: 2rem;
+    position: relative;
+    overflow: hidden;
+}
+
+.dashboard-header::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 200px;
+    height: 200px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 50%;
+    transform: translate(50%, -50%);
+}
+
+.dashboard-header h1 {
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+}
+
+.dashboard-header p {
+    font-size: 1.1rem;
+    opacity: 0.9;
+    margin-bottom: 0;
+}
+
+.dashboard-header .brand {
+    font-size: 1rem;
+    opacity: 0.8;
+    margin-bottom: 1rem;
+}
+
+/* Stats Cards */
+.stats-section {
+    margin-bottom: 3rem;
+}
+
+.stat-card {
+    background: white;
+    border-radius: var(--border-radius);
+    padding: 1.5rem;
+    box-shadow: var(--shadow);
+    transition: all 0.3s ease;
+    border-left: 4px solid var(--primary-color);
+}
+
+.stat-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+}
+
+.stat-card .icon {
+    width: 50px;
+    height: 50px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+}
+
+.stat-card .number {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--text-color);
+    margin-bottom: 0.5rem;
+}
+
+.stat-card .label {
+    color: var(--text-muted);
+    font-size: 0.9rem;
+    font-weight: 500;
+}
+
+.stat-card.medications .icon {
+    background: rgba(40, 167, 69, 0.1);
+    color: #28a745;
+}
+
+.stat-card.patients .icon {
+    background: rgba(255, 193, 7, 0.1);
+    color: #ffc107;
+}
+
+.stat-card.accuracy .icon {
+    background: rgba(23, 162, 184, 0.1);
+    color: #17a2b8;
+}
+
+.stat-card.uptime .icon {
+    background: rgba(220, 53, 69, 0.1);
+    color: #dc3545;
+}
+
+/* Partners Section */
+.partners-section {
+    background: white;
+    border-radius: var(--border-radius);
+    padding: 2rem;
+    box-shadow: var(--shadow);
+    margin-bottom: 3rem;
+}
+
+.partners-section h3 {
+    color: var(--text-color);
+    font-weight: 600;
+    margin-bottom: 2rem;
+    text-align: center;
+    position: relative;
+}
+
+.partners-section h3::after {
+    content: '';
+    position: absolute;
+    bottom: -10px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 80px;
+    height: 3px;
+    background: linear-gradient(135deg, var(--primary-color), var(--primary-light));
+    border-radius: 2px;
+}
+
+.partner-card {
+    background: #f8f9fa;
+    border-radius: var(--border-radius);
+    padding: 2rem;
+    text-align: center;
+    transition: all 0.3s ease;
+    border: 2px solid transparent;
+}
+
+.partner-card:hover {
+    transform: translateY(-5px);
+    border-color: var(--primary-color);
+    background: white;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+}
+
+.partner-image {
+    width: 120px;
+    height: 120px;
+    object-fit: cover;
+    border-radius: 50%;
+    border: 3px solid var(--primary-light);
+    margin-bottom: 1rem;
+}
+
+.partner-card h5 {
+    color: var(--text-color);
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+}
+
+.partner-card .badge {
+    background: var(--primary-color);
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    font-size: 0.8rem;
+}
+
+/* Team Section */
+.team-section {
+    background: white;
+    border-radius: var(--border-radius);
+    padding: 2rem;
+    box-shadow: var(--shadow);
+}
+
+.team-section h3 {
+    color: var(--text-color);
+    font-weight: 600;
+    margin-bottom: 1rem;
+    text-align: center;
+    position: relative;
+}
+
+.team-section h3::after {
+    content: '';
+    position: absolute;
+    bottom: -10px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 80px;
+    height: 3px;
+    background: linear-gradient(135deg, var(--primary-color), var(--primary-light));
+    border-radius: 2px;
+}
+
+.team-subtitle {
+    text-align: center;
+    color: var(--text-muted);
+    margin-bottom: 2rem;
+    font-size: 1rem;
+}
+
+.team-member {
+    background: #f8f9fa;
+    border-radius: var(--border-radius);
+    padding: 1.5rem;
+    text-align: center;
+    transition: all 0.3s ease;
+    border: 2px solid transparent;
+    height: 100%;
+}
+
+.team-member:hover {
+    transform: translateY(-5px);
+    border-color: var(--primary-color);
+    background: white;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+}
+
+.team-image {
+    width: 100px;
+    height: 100px;
+    object-fit: cover;
+    border-radius: 50%;
+    border: 3px solid var(--primary-light);
+    margin-bottom: 1rem;
+}
+
+.team-member h5 {
+    color: var(--text-color);
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    font-size: 1.1rem;
+}
+
+.team-member p {
+    color: var(--text-muted);
+    font-size: 0.9rem;
+    margin-bottom: 1rem;
+}
+
+.team-member .specialty {
+    background: var(--primary-light);
+    color: var(--primary-dark);
+    padding: 0.3rem 0.8rem;
+    border-radius: 15px;
+    font-size: 0.8rem;
+    font-weight: 500;
+    display: inline-block;
+}
+
+/* Animation delays for staggered effect */
+.animate-delay-1 { animation-delay: 0.1s; }
+.animate-delay-2 { animation-delay: 0.2s; }
+.animate-delay-3 { animation-delay: 0.3s; }
+.animate-delay-4 { animation-delay: 0.4s; }
+
+/* Dashboard Responsive Design */
+@media (max-width: 768px) {
+    .dashboard-header h1 {
+        font-size: 2rem;
+    }
+
+    .stat-card {
+        margin-bottom: 1rem;
+    }
+
+    .partners-section,
+    .team-section {
+        padding: 1.5rem;
+    }
+
+    .dashboard-container {
+        padding: 1rem 0;
+    }
+    
+    .category-card .card-icon {
+        width: 40px;
+        height: 40px;
+        font-size: 1rem;
+    }
+    
+    .medication-item .card-body {
+        padding: 1rem;
+    }
+}
+
+/* ---------- Scoped Medical Information Assistant Styles ---------- */
+.medical-info-app {
+    /* Override ONLY inside this section */
+    
+    /* font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    line-height: 1.6;
+    color: #333;
+    background-color: #F5F7FA;
+    padding: 20px 0; */
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    min-height: 80vh;
+    background: transparent;
+}
+.medical-info-card {
+    /* width: 100%;
+    max-width: 1100px;
+    background: white;
+    border-radius: 18px;
+    box-shadow: 0 2px 16px rgba(30,136,229,0.08), 0 1.5px 6px rgba(0,0,0,0.04);
+    margin-top: 30px;
+    overflow: hidden; */
+    width: 100%;
+    max-width: 1100px;
+    background: white;
+    border-radius: 18px;
+    box-shadow: 0 2px 16px rgba(30,136,229,0.08), 0 1.5px 6px rgba(0,0,0,0.04);
+    margin-top: 30px;
+    overflow: hidden;
+}
+.medical-info-header {
+    /* background: #2196f3;
+    color: #fff;
+    border-radius: 18px 18px 0 0;
+    padding: 48px 30px 28px 30px;
+    box-shadow: 0 2px 6px rgba(30,136,229,0.06); */
+    background: #2d82b5;
+    color: #fff;
+    border-radius: 18px 18px 0 0;
+    padding: 48px 30px 28px 30px;
+    box-shadow: 0 2px 6px rgba(30,136,229,0.06);
+    text-align: center;
+}
+.medical-info-header h1 {
+    /* font-size: 2.7rem;
+    font-weight: 700;
+    margin-bottom: 12px;
+    letter-spacing: 0.02em; */
+    font-size: 2.7rem;
+    font-weight: 700;
+    margin-bottom: 12px;
+    letter-spacing: 0.02em;
+}
+.medical-info-header .subtitle {
+    /* font-size: 1.2rem;
+    opacity: 0.93;
+    margin-bottom: 0; */
+    font-size: 1.2rem;
+    opacity: 0.93;
+    margin-bottom: 0;
+}
+@media (max-width: 768px) {
+    .medical-info-header {
+        padding: 30px 12px 15px 12px;
+    }
+    .medical-info-header h1 {
+        font-size: 2rem;
+    }
+}
+.medical-info-app .container {
+    max-width: 1000px;
+    margin: 0 auto;
+    background-color: white;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+}
+
+.medical-info-app header {
+    background-color: #1E88E5;
+    color: white;
+    padding: 30px 40px;
+    text-align: center;
+}
+
+.medical-info-app h1 {
+    margin-bottom: 10px;
+    font-weight: 600;
+}
+
+.medical-info-app .subtitle {
+    font-size: 1.1rem;
+    opacity: 0.9;
+}
+
+.medical-info-app .search-container {
+    padding: 30px 40px;
+    background-color: white;
+    border-bottom: 1px solid #E5E8EB;
+}
+
+.medical-info-app .search-input-container {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 15px;
+}
+
+.medical-info-app input[type="text"] {
+    flex: 1;
+    padding: 12px 16px;
+    border: 1px solid #E5E8EB;
+    border-radius: 8px;
+    font-size: 16px;
+    transition: border-color 0.3s;
+}
+
+.medical-info-app input[type="text"]:focus {
+    border-color: #1E88E5;
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(30,136,229,0.2);
+}
+
+.medical-info-app select {
+    padding: 12px 16px;
+    border: 1px solid #E5E8EB;
+    border-radius: 8px;
+    font-size: 16px;
+    background-color: white;
+    min-width: 140px;
+    cursor: pointer;
+}
+
+.medical-info-app button {
+    background-color: #1E88E5;
+    color: white;
+    border: none;
+    padding: 12px 24px;
+    border-radius: 8px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.medical-info-app button:hover {
+    background-color: #1565C0;
+}
+
+.medical-info-app .search-type-explanation {
+    background-color: #F5F7FA;
+    padding: 12px 16px;
+    border-radius: 8px;
+    margin-top: 15px;
+}
+
+.medical-info-app .search-type-explanation p {
+    font-size: 14px;
+    color: #637381;
+    margin-bottom: 5px;
+}
+
+/* Loading Indicator */
+.medical-info-app .loading {
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 40px;
+    background-color: white;
+}
+
+.medical-info-app .spinner {
+    width: 40px;
+    height: 40px;
+    border: 4px solid rgba(30, 136, 229, 0.2);
+    border-radius: 50%;
+    border-top-color: #1E88E5;
+    animation: spin 1s ease-in-out infinite;
+    margin-bottom: 15px;
+}
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+.medical-info-app .loading p {
+    color: #637381;
+    font-size: 16px;
+}
+
+/* Results Styles */
+.medical-info-app .result-container {
+    display: none;
+    padding: 30px 40px;
+    background-color: white;
+    border-bottom: 1px solid #E5E8EB;
+}
+.medical-info-app .result-container h2 {
+    margin-bottom: 20px;
+    color: #1E88E5;
+    font-size: 1.5rem;
+    font-weight: 600;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #E5E8EB;
+}
+.medical-info-app #result-content {
+    background-color: #F5F7FA;
+    padding: 20px;
+    border-radius: 8px;
+    line-height: 1.7;
+}
+
+/* Examples Section */
+.medical-info-app .examples {
+    padding: 30px 40px;
+    background-color: white;
+}
+.medical-info-app .examples h3 {
+    margin-bottom: 20px;
+    font-size: 1.3rem;
+    color: #333;
+}
+.medical-info-app .example-container {
+    display: flex;
+    gap: 20px;
+}
+.medical-info-app .example-card {
+    flex: 1;
+    background-color: #F5F7FA;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+}
+.medical-info-app .symptoms {
+    border-left: 4px solid #1E88E5;
+}
+.medical-info-app .diseases {
+    border-left: 4px solid #26A69A;
+}
+.medical-info-app .example-card h4 {
+    margin-bottom: 15px;
+    font-size: 1.1rem;
+}
+.medical-info-app .example-card ul {
+    list-style-type: none;
+}
+.medical-info-app .example-card li {
+    margin-bottom: 10px;
+}
+.medical-info-app .example-link {
+    color: #1E88E5;
+    text-decoration: none;
+    display: inline-block;
+    padding: 5px 0;
+    position: relative;
+}
+.medical-info-app .example-link:hover {
+    text-decoration: underline;
+}
+
+/* Footer */
+.medical-info-app footer {
+    padding: 20px 40px;
+    background-color: #F5F7FA;
+    border-top: 1px solid #E5E8EB;
+}
+.medical-info-app footer p {
+    font-size: 14px;
+    color: #637381;
+    text-align: center;
+}
+
+/* Responsive Styles for Medical Info */
+@media (max-width: 768px) {
+    .medical-info-app .search-input-container {
+        flex-direction: column;
+    }
+    .medical-info-app .example-container {
+        flex-direction: column;
+    }
+    .medical-info-app .example-card {
+        margin-bottom: 15px;
+    }
+    .medical-info-app header, 
+    .medical-info-app .search-container,
+    .medical-info-app .result-container, 
+    .medical-info-app .examples, 
+    .medical-info-app footer {
+        padding: 20px;
+    }
+}
+/* ---------- END Scoped Medical Information Assistant Styles ---------- */
+/* ---------- Scoped Advanced Dose Calculator Styles ---------- */
+.dose-calculator-app {
+    /* Main container styling */
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    min-height: 100vh;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    padding: 20px 0;
+}
+
+.dose-calculator-app .container {
+    background: rgba(12, 84, 96, 0.95);
+    border-radius: 15px;
+    margin-top: 20px;
+    margin-bottom: 20px;
+    padding: 30px;
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+    backdrop-filter: blur(10px);
+    max-width: 1200px;
+}
+
+/* Navbar Enhancements */
+.dose-calculator-app .navbar-brand {
+    font-weight: 700;
+    font-size: 1.5rem;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    color: white;
+}
+
+/* Card Enhancements */
+.dose-calculator-app .card {
+    border: none;
+    border-radius: 15px;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    overflow: hidden;
+    background: var(--card-color);
+}
+
+.dose-calculator-app .card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.12);
+}
+
+.dose-calculator-app .card-header {
+    border-radius: 15px 15px 0 0 !important;
+    padding: 20px;
+    font-weight: 600;
+    border-bottom: none;
+    background: linear-gradient(135deg, var(--primary-color), var(--primary-light));
+    color: white;
+}
+
+.dose-calculator-app .card-body {
+    padding: 25px;
+    background: var(--card-color);
+}
+
+/* Form Enhancements */
+.dose-calculator-app .form-control, 
+.dose-calculator-app .form-select {
+    border-radius: 10px;
+    border: 2px solid #e9ecef;
+    padding: 12px 15px;
+    font-size: 14px;
+    transition: all 0.3s ease;
+    background: var(--card-color);
+    color: var(--text-color);
+}
+
+.dose-calculator-app .form-control:focus, 
+.dose-calculator-app .form-select:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 0.2rem rgba(45, 130, 181, 0.15);
+    transform: translateY(-2px);
+}
+
+.dose-calculator-app .form-label {
+    font-weight: 600;
+    color: var(--text-color);
+    margin-bottom: 8px;
+}
+
+/* Input Fields Override */
+.dose-calculator-app input[type="text"],
+.dose-calculator-app input[type="number"],
+.dose-calculator-app select {
+    border-radius: 10px;
+    padding: 12px 15px;
+    font-size: 14px;
+    border: 2px solid #e9ecef;
+    width: 100%;
+    background: var(--card-color);
+    color: var(--text-color);
+    transition: all 0.3s ease;
+}
+
+.dose-calculator-app input[type="text"]:focus,
+.dose-calculator-app input[type="number"]:focus,
+.dose-calculator-app select:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 0.2rem rgba(45, 130, 181, 0.15);
+    transform: translateY(-2px);
+}
+
+/* Button Enhancements */
+.dose-calculator-app .btn {
+    border-radius: 10px;
+    padding: 12px 25px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    border: none;
+}
+
+.dose-calculator-app .btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+}
+
+.dose-calculator-app .btn-primary {
+    background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
+    color: white;
+}
+
+.dose-calculator-app .btn-success {
+    background: linear-gradient(135deg, #28a745 0%, #1e7e34 100%);
+    color: white;
+}
+
+.dose-calculator-app .btn-warning {
+    background: linear-gradient(135deg, var(--secondary-color) 0%, #e0a800 100%);
+    color: var(--text-color);
+}
+
+.dose-calculator-app .btn-danger {
+    background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+    color: white;
+}
+
+/* Table Enhancements */
+.dose-calculator-app .table {
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+    background: var(--card-color);
+}
+
+.dose-calculator-app .table thead th {
+    background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
+    border: none;
+    color: white;
+    font-weight: 600;
+    padding: 15px;
+}
+
+.dose-calculator-app .table tbody tr {
+    transition: all 0.3s ease;
+}
+
+.dose-calculator-app .table tbody tr:hover {
+    background-color: rgba(45, 130, 181, 0.05);
+    transform: scale(1.01);
+}
+
+.dose-calculator-app .table tbody td {
+    padding: 15px;
+    vertical-align: middle;
+    border-color: #f8f9fa;
+    color: var(--text-color);
+}
+
+/* Badge Enhancements */
+.dose-calculator-app .badge {
+    padding: 8px 12px;
+    border-radius: 20px;
+    font-weight: 500;
+    text-transform: uppercase;
+    font-size: 0.75rem;
+    letter-spacing: 0.5px;
+}
+
+.dose-calculator-app .badge-primary {
+    background: var(--primary-color);
+    color: white;
+}
+
+.dose-calculator-app .badge-secondary {
+    background: var(--secondary-color);
+    color: var(--text-color);
+}
+
+/* Alert Enhancements */
+.dose-calculator-app .alert {
+    border-radius: 10px;
+    border: none;
+    padding: 15px 20px;
+    margin-bottom: 20px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+}
+
+.dose-calculator-app .alert-info {
+    background: linear-gradient(135deg, rgba(45, 130, 181, 0.1) 0%, rgba(136, 205, 246, 0.1) 100%);
+    color: var(--primary-color);
+    border-left: 4px solid var(--primary-color);
+}
+
+.dose-calculator-app .alert-success {
+    background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%);
+    color: #155724;
+    border-left: 4px solid #28a745;
+}
+
+.dose-calculator-app .alert-warning {
+    background: linear-gradient(135deg, rgba(233, 196, 106, 0.1) 0%, rgba(233, 196, 106, 0.2) 100%);
+    color: #856404;
+    border-left: 4px solid var(--secondary-color);
+}
+
+.dose-calculator-app .alert-danger {
+    background: linear-gradient(135deg, #f8d7da 0%, #f5c6cb 100%);
+    color: #721c24;
+    border-left: 4px solid #dc3545;
+}
+
+/* Loading Animation */
+.dose-calculator-app .loading {
+    animation: dose-calc-pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes dose-calc-pulse {
+    0% { opacity: 1; }
+    50% { opacity: 0.5; }
+    100% { opacity: 1; }
+}
+
+/* Specialty Classes */
+.dose-calculator-app .text-gradient {
+    background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-light) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    font-weight: 600;
+}
+
+.dose-calculator-app .glass-effect {
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.dose-calculator-app .shadow-soft {
+    box-shadow: var(--shadow);
+}
+
+/* Animation Classes */
+.dose-calculator-app .fade-in {
+    animation: dose-calc-fadeIn 0.5s ease-in;
+}
+
+@keyframes dose-calc-fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.dose-calculator-app .slide-up {
+    animation: dose-calc-slideUp 0.6s ease-out;
+}
+
+@keyframes dose-calc-slideUp {
+    from { opacity: 0; transform: translateY(50px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* Special Medical Indicators */
+.dose-calculator-app .medical-critical {
+    border-left: 5px solid #dc3545;
+    background-color: rgba(220, 53, 69, 0.05);
+    padding: 15px;
+    border-radius: var(--border-radius);
+    margin-bottom: 1rem;
+}
+
+.dose-calculator-app .medical-warning {
+    border-left: 5px solid var(--secondary-color);
+    background-color: rgba(233, 196, 106, 0.05);
+    padding: 15px;
+    border-radius: var(--border-radius);
+    margin-bottom: 1rem;
+}
+
+.dose-calculator-app .medical-info {
+    border-left: 5px solid var(--primary-color);
+    background-color: rgba(45, 130, 181, 0.05);
+    padding: 15px;
+    border-radius: var(--border-radius);
+    margin-bottom: 1rem;
+}
+
+/* Footer Styles */
+.dose-calculator-app footer {
+    margin-top: 2rem;
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    border-radius: var(--border-radius);
+    padding: 1.5rem;
+    color: white;
+    text-align: center;
+}
+
+/* Custom Scrollbar for dose calculator */
+.dose-calculator-app ::-webkit-scrollbar {
+    width: 8px;
+}
+
+.dose-calculator-app ::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+}
+
+.dose-calculator-app ::-webkit-scrollbar-thumb {
+    background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-light) 100%);
+    border-radius: 10px;
+}
+
+.dose-calculator-app ::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary-color) 100%);
+}
+
+/* Responsive Enhancements */
+@media (max-width: 768px) {
+    .dose-calculator-app .container {
+        margin: 10px;
+        padding: 20px;
+        border-radius: 10px;
+    }
+    
+    .dose-calculator-app .card-body {
+        padding: 15px;
+    }
+    
+    .dose-calculator-app .btn {
+        padding: 10px 20px;
+        width: 100%;
+        margin-bottom: 10px;
+    }
+    
+    .dose-calculator-app .table-responsive {
+        border-radius: 10px;
+    }
+    
+    .dose-calculator-app .navbar-brand {
+        font-size: 1.2rem;
+    }
+    
+    .dose-calculator-app {
+        padding: 10px 0;
+    }
+}
+
+/* Print Styles */
+@media print {
+    .dose-calculator-app {
+        background: white !important;
+    }
+    
+    .dose-calculator-app .container {
+        background: white !important;
+        box-shadow: none !important;
+        margin: 0 !important;
+        padding: 20px !important;
+    }
+    
+    .dose-calculator-app .card {
+        box-shadow: none !important;
+        border: 1px solid #dee2e6 !important;
+        margin-bottom: 20px !important;
+    }
+    
+    .dose-calculator-app .btn, 
+    .dose-calculator-app .navbar {
+        display: none !important;
+    }
+    
+    .dose-calculator-app .card-header {
+        background: var(--primary-color) !important;
+        color: white !important;
+        -webkit-print-color-adjust: exact;
+    }
+}
+
+/* Header styling for dose calculator */
+.dose-calculator-app h1,
+.dose-calculator-app h2,
+.dose-calculator-app h3,
+.dose-calculator-app h4,
+.dose-calculator-app h5,
+.dose-calculator-app h6 {
+    color: var(--text-color);
+    font-weight: 600;
+}
+
+.dose-calculator-app .card-header h1,
+.dose-calculator-app .card-header h2,
+.dose-calculator-app .card-header h3,
+.dose-calculator-app .card-header h4,
+.dose-calculator-app .card-header h5,
+.dose-calculator-app .card-header h6 {
+    color: white;
+}
+
+/* Text styling */
+.dose-calculator-app p,
+.dose-calculator-app span,
+.dose-calculator-app div {
+    color: var(--text-color);
+}
+
+.dose-calculator-app .text-muted {
+    color: var(--text-muted) !important;
+}
+/* ---------- END Scoped Advanced Dose Calculator Styles ---------- */

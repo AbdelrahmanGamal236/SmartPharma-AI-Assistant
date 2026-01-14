@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Medical Condition Predictor</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f3e5f5;
+            text-align: center;
+            margin: 0;
+            padding: 20px;
+        }
+        form, .results {
+            margin: 20px auto;
+            max-width: 400px;
+            background: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        input, button {
+            width: 100%;
+            margin: 10px 0;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        button {
+            background-color: #673ab7;
+            color: #fff;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #5e35b1;
+        }
+        .results {
+            display: none; /* Hide results by default */
+        }
+    </style>
+</head>
+<body>
+    <h1>Drug Recommendation System</h1>
+    <div>
+        <input type="text" id="medicalCondition" placeholder="Enter a medical condition">
+        <button onclick="getRecommendation()">Get Recommendation</button>
+    </div>
+    <div class="results" id="results">
+        <h3>Results:</h3>
+        <p><strong>Corrected Condition:</strong> <span id="correctedCondition"></span></p>
+        <p><strong>Recommended Drug:</strong> <span id="recommendedDrug"></span></p>
+        <p><strong>Error:</strong> <span id="errorMessage"></span></p>
+    </div>
+    <script>
+        async function getRecommendation() {
+            const medicalCondition = document.getElementById('medicalCondition').value;
+            const resultsDiv = document.getElementById('results');
+            const correctedConditionSpan = document.getElementById('correctedCondition');
+            const recommendedDrugSpan = document.getElementById('recommendedDrug');
+            const errorMessageSpan = document.getElementById('errorMessage');
+
+            // Hide results initially
+            resultsDiv.style.display = 'none';
+
+            // Validate input
+            if (!medicalCondition.trim()) {
+                alert("Please enter a medical condition.");
+                return;
+            }
+
+            try {
+                // Send a POST request to the Flask app
+                const response = await fetch('/predict', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ medical_condition: medicalCondition }),
+                });
+
+                // Handle non-OK responses
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                // Parse the JSON response
+                const data = await response.json();
+
+                // Display the results
+                correctedConditionSpan.textContent = data.corrected_condition || "N/A";
+                recommendedDrugSpan.textContent = data.predicted_drug || "N/A";
+                errorMessageSpan.textContent = data.error || "No error";
+
+                resultsDiv.style.display = 'block'; // Show results
+            } catch (error) {
+                alert(`An error occurred: ${error.message}`);
+            }
+        }
+    </script>
+</body>
+</html>

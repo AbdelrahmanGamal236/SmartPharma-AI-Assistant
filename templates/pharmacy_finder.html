@@ -1,0 +1,338 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2 class="mb-4">Find Nearest Pharmacy</h2>
+    
+    <div class="card">
+        <div class="card-body">
+            <!-- Manual location input form -->
+            <div class="mb-3">
+                <div class="row">
+                    <div class="col-md-4">
+                        <input type="text" id="latitude" class="form-control" placeholder="Latitude (e.g., 30.0444)">
+                    </div>
+                    <div class="col-md-4">
+                        <input type="text" id="longitude" class="form-control" placeholder="Longitude (e.g., 31.2357)">
+                    </div>
+                    <div class="col-md-4">
+                        <button onclick="searchLocation()" class="btn btn-primary">Search Location</button>
+                        <button onclick="getCurrentLocation()" class="btn btn-secondary ml-2">Use My Location</button>
+                    </div>
+                </div>
+                <small class="form-text text-muted">
+                    You can either enter coordinates manually or click "Use My Location" to automatically detect your position.
+                    Default coordinates are set to Cairo, Egypt (30.0444, 31.2357).
+                </small>
+            </div>
+            
+            <!-- Loading indicator -->
+            <div id="loading-indicator" class="text-center" style="display: none;">
+                <div class="spinner-border text-primary" role="status">
+                    <span class="sr-only">Loading...</span>
+                </div>
+                <p class="mt-2">Searching for nearby pharmacies...</p>
+            </div>
+            
+            <!-- Single pharmacy info (nearest) -->
+            <div id="pharmacy-info" class="mt-3" style="display: none;">
+                <h4>Nearest Pharmacy:</h4>
+                <div class="card bg-light">
+                    <div class="card-body">
+                        <h5 class="card-title" id="pharmacy-name"></h5>
+                        <p class="card-text"><strong>Address:</strong> <span id="pharmacy-address"></span></p>
+                        <p class="card-text"><strong>Distance:</strong> <span id="pharmacy-distance"></span> km</p>
+                        <div id="pharmacy-rating" style="display: none;">
+                            <p class="card-text"><strong>Rating:</strong> <span id="rating-value"></span> ⭐</p>
+                        </div>
+                        <div id="pharmacy-url" style="display: none;">
+                            <a href="#" id="pharmacy-link" target="_blank" class="btn btn-sm btn-outline-primary">View Details</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- All pharmacies list -->
+            <div id="all-pharmacies" class="mt-4" style="display: none;">
+                <h4>All Nearby Pharmacies:</h4>
+                <div id="pharmacies-list"></div>
+                <button id="toggle-list" class="btn btn-secondary mt-2" onclick="togglePharmaciesList()">Show All Pharmacies</button>
+            </div>
+
+            <div id="error-message" class="alert alert-danger" style="display: none;">
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBbe9C8ZvYsA8VNzREojBjmgo7Apaf2R20"></script>
+<script>
+let map;
+let marker;
+let pharmacyMarkers = [];
+let allPharmaciesData = [];
+let listVisible = false;
+const defaultLocation = { lat: 30.0444, lng: 31.2357 }; // Cairo, Egypt 30.71951, 31.25593
+
+function initMap() {
+    // map = new google.maps.Map(document.getElementById("map"), {
+    //     zoom: 13,
+    //     center: defaultLocation,
+    // });
+
+    // Place initial marker at default location
+    placeMarker(defaultLocation);
+    
+    // Add click event listener to map
+    // map.addListener('click', function(e) {
+    //     const position = {
+    //         lat: e.latLng.lat(),
+    //         lng: e.latLng.lng()
+    //     };
+    //     placeMarker(position);
+    //     updateCoordinateInputs(position);
+    //     findNearestPharmacy(position.lat, position.lng);
+    // });
+
+    // Set default coordinates in input fields
+    document.getElementById('latitude').value = defaultLocation.lat;
+    document.getElementById('longitude').value = defaultLocation.lng;
+    
+    // Find nearest pharmacy at default location
+    findNearestPharmacy(defaultLocation.lat, defaultLocation.lng);
+}
+
+function getCurrentLocation() {
+    if (navigator.geolocation) {
+        // Show loading state
+        document.getElementById('error-message').style.display = 'none';
+        const locationButton = document.querySelector('button[onclick="getCurrentLocation()"]');
+        locationButton.disabled = true;
+        locationButton.innerHTML = 'Getting location...';
+
+        navigator.geolocation.getCurrentPosition(
+            (position) => {
+                const pos = {
+                    lat: position.coords.latitude,
+                    lng: position.coords.longitude,
+                };
+                
+                map.setCenter(pos);
+                placeMarker(pos);
+                updateCoordinateInputs(pos);
+                findNearestPharmacy(pos.lat, pos.lng);
+                
+                // Reset button state
+                locationButton.disabled = false;
+                locationButton.innerHTML = 'Use My Location';
+            },
+            (error) => {
+                // Handle each error type
+                let errorMessage = 'Error getting your location. ';
+                switch(error.code) {
+                    case error.PERMISSION_DENIED:
+                        errorMessage += 'Please allow location access in your browser settings or enter coordinates manually.';
+                        break;
+                    case error.POSITION_UNAVAILABLE:
+                        errorMessage += 'Location information is unavailable.';
+                        break;
+                    case error.TIMEOUT:
+                        errorMessage += 'Location request timed out.';
+                        break;
+                    default:
+                        errorMessage += 'An unknown error occurred.';
+                }
+                showError(errorMessage);
+                
+                // Reset button state
+                locationButton.disabled = false;
+                locationButton.innerHTML = 'Use My Location';
+            },
+            {
+                enableHighAccuracy: true,
+                timeout: 10000,
+                maximumAge: 0
+            }
+        );
+    } else {
+        showError("Geolocation is not supported by this browser. Please enter coordinates manually.");
+    }
+}
+
+function searchLocation() {
+    const lat = parseFloat(document.getElementById('latitude').value);
+    const lng = parseFloat(document.getElementById('longitude').value);
+    
+    if (isNaN(lat) || isNaN(lng) || lat < -90 || lat > 90 || lng < -180 || lng > 180) {
+        showError("Please enter valid coordinates. Latitude must be between -90 and 90, and longitude between -180 and 180.");
+        return;
+    }
+
+    const position = { lat, lng };
+    map.setCenter(position);
+    placeMarker(position);
+    findNearestPharmacy(lat, lng);
+}
+
+function placeMarker(position) {
+    if (marker) marker.setMap(null);
+    marker = new google.maps.Marker({
+        position: position,
+        map: map,
+        title: "Your Location",
+        icon: 'http://maps.google.com/mapfiles/ms/icons/red-dot.png'
+    });
+}
+
+function updateCoordinateInputs(position) {
+    document.getElementById('latitude').value = position.lat.toFixed(6);
+    document.getElementById('longitude').value = position.lng.toFixed(6);
+}
+
+function showError(message) {
+    const errorDiv = document.getElementById('error-message');
+    errorDiv.textContent = message;
+    errorDiv.style.display = 'block';
+    
+    // Hide other sections
+    document.getElementById('pharmacy-info').style.display = 'none';
+    document.getElementById('all-pharmacies').style.display = 'none';
+    document.getElementById('loading-indicator').style.display = 'none';
+}
+
+function clearPharmacyMarkers() {
+    pharmacyMarkers.forEach(marker => marker.setMap(null));
+    pharmacyMarkers = [];
+}
+
+function findNearestPharmacy(lat, lng) {
+    // Hide previous results and errors
+    document.getElementById('error-message').style.display = 'none';
+    document.getElementById('pharmacy-info').style.display = 'none';
+    document.getElementById('all-pharmacies').style.display = 'none';
+    document.getElementById('loading-indicator').style.display = 'block';
+    
+    // Clear existing pharmacy markers
+    clearPharmacyMarkers();
+    
+    fetch(`/find-nearest-pharmacy?latitude=${lat}&longitude=${lng}`)
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            return response.json();
+        })
+        .then(data => {
+            console.log('Response data:', data); // Debug log
+            
+            document.getElementById('loading-indicator').style.display = 'none';
+            
+            if (data.success && data.pharmacy_name && data.pharmacy_name !== "No pharmacies found nearby" && data.pharmacy_name !== "Error") {
+                // Show nearest pharmacy info
+                document.getElementById('pharmacy-info').style.display = 'block';
+                document.getElementById('pharmacy-name').textContent = data.pharmacy_name;
+                document.getElementById('pharmacy-address').textContent = data.pharmacy_address;
+                document.getElementById('pharmacy-distance').textContent = data.distance_km || 'N/A';
+                
+                // Show rating if available
+                if (data.rating) {
+                    document.getElementById('pharmacy-rating').style.display = 'block';
+                    document.getElementById('rating-value').textContent = data.rating;
+                } else {
+                    document.getElementById('pharmacy-rating').style.display = 'none';
+                }
+                
+                // Show URL if available
+                if (data.url) {
+                    document.getElementById('pharmacy-url').style.display = 'block';
+                    document.getElementById('pharmacy-link').href = data.url;
+                } else {
+                    document.getElementById('pharmacy-url').style.display = 'none';
+                }
+                
+                // Add marker for the nearest pharmacy
+                const pharmacyMarker = new google.maps.Marker({
+                    position: { lat: data.pharmacy_lat, lng: data.pharmacy_lng },
+                    map: map,
+                    title: data.pharmacy_name,
+                    icon: 'http://maps.google.com/mapfiles/ms/icons/green-dot.png'
+                });
+                pharmacyMarkers.push(pharmacyMarker);
+                
+                // Store all pharmacies data and show toggle button if we have multiple
+                if (data.pharmacies && data.pharmacies.length > 1) {
+                    allPharmaciesData = data.pharmacies;
+                    document.getElementById('all-pharmacies').style.display = 'block';
+                    
+                    // Add markers for all pharmacies
+                    data.pharmacies.forEach((pharmacy, index) => {
+                        if (index > 0) { // Skip first one as it's already added
+                            const marker = new google.maps.Marker({
+                                position: { lat: pharmacy.pharmacy_lat, lng: pharmacy.pharmacy_lng },
+                                map: map,
+                                title: `${pharmacy.pharmacy_name} (${pharmacy.distance_km}km)`,
+                                icon: 'http://maps.google.com/mapfiles/ms/icons/blue-dot.png'
+                            });
+                            pharmacyMarkers.push(marker);
+                        }
+                    });
+                }
+                
+            } else {
+                // Handle case where no pharmacies found or error occurred
+                const errorMessage = data.pharmacy_name === "Error" ? data.pharmacy_address : 
+                                  data.pharmacy_name === "No pharmacies found nearby" ? "No pharmacies found in your area. Try a different location." :
+                                  data.error || "Unknown error occurred";
+                showError(errorMessage);
+            }
+        })
+        .catch(error => {
+            console.error('Fetch error:', error);
+            document.getElementById('loading-indicator').style.display = 'none';
+            showError('Error connecting to the server. Please check your internet connection and try again.');
+        });
+}
+
+function togglePharmaciesList() {
+    const listContainer = document.getElementById('pharmacies-list');
+    const toggleButton = document.getElementById('toggle-list');
+    
+    if (!listVisible) {
+        // Show the list
+        let listHTML = '';
+        allPharmaciesData.forEach((pharmacy, index) => {
+            listHTML += `
+                <div class="card mb-2 ${index === 0 ? 'border-success' : ''}">
+                    <div class="card-body py-2">
+                        <div class="row align-items-center">
+                            <div class="col-md-6">
+                                <h6 class="card-title mb-1">${pharmacy.pharmacy_name} ${index === 0 ? '<span class="badge badge-success">Nearest</span>' : ''}</h6>
+                                <small class="text-muted">${pharmacy.pharmacy_address}</small>
+                            </div>
+                            <div class="col-md-3">
+                                <small><strong>Distance:</strong> ${pharmacy.distance_km} km</small>
+                                ${pharmacy.rating ? `<br><small><strong>Rating:</strong> ${pharmacy.rating} ⭐</small>` : ''}
+                            </div>
+                            <div class="col-md-3">
+                                ${pharmacy.url ? `<a href="${pharmacy.url}" target="_blank" class="btn btn-sm btn-outline-primary">View Details</a>` : ''}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        });
+        listContainer.innerHTML = listHTML;
+        toggleButton.textContent = 'Hide List';
+        listVisible = true;
+    } else {
+        // Hide the list
+        listContainer.innerHTML = '';
+        toggleButton.textContent = 'Show All Pharmacies';
+        listVisible = false;
+    }
+}
+
+// Initialize the map when the page loads
+window.onload = initMap;
+</script>
+{% endblock %}

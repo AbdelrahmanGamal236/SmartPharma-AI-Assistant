@@ -1,0 +1,140 @@
+{% extends "base.html" %}
+
+{% block title %}Welcome to pharmaSafe{% endblock %}
+
+{% block content %}
+<div class="landing-container">
+    <!-- Hero Section -->
+    <div class="hero-section text-center mb-5">
+        <div class="row align-items-center">
+            <div class="col-lg-6 text-lg-start mb-4 mb-lg-0">
+                <h1 class="display-4 fw-bold mb-4">Your Health, <br>Our Priority</h1>
+                <p class="lead text-muted mb-4">Experience modern healthcare management with our comprehensive pharmacy solution.</p>
+                <div class="d-flex gap-3 justify-content-lg-start justify-content-center">
+                    <a href="{{ url_for('register') }}" class="btn btn-primary btn-lg px-4">
+                        Get Started
+                        <i class="fas fa-arrow-right ms-2"></i>
+                    </a>
+                    <a href="{{ url_for('login') }}" class="btn btn-outline-primary btn-lg px-4">
+                        Sign In
+                    </a>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <img src="https://cdn-icons-png.flaticon.com/512/6260/6260435.png" alt="Healthcare" class="img-fluid hero-image">
+            </div>
+        </div>
+    </div>
+
+    <!-- Features Section -->
+    <div class="features-section mb-5">
+        <h2 class="text-center mb-4">Why Choose Us</h2>
+        <div class="row g-4">
+            <div class="col-md-4">
+                <div class="card h-100">
+                    <div class="card-body text-center p-4">
+                        <div class="feature-icon mb-3">
+                            <i class="fas fa-pills"></i>
+                        </div>
+                        <h5 class="card-title">Wide Medicine Range</h5>
+                        <p class="card-text text-muted">Access to a comprehensive selection of medications and healthcare products.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card h-100">
+                    <div class="card-body text-center p-4">
+                        <div class="feature-icon mb-3">
+                            <i class="fas fa-truck"></i>
+                        </div>
+                        <h5 class="card-title">Fast Delivery</h5>
+                        <p class="card-text text-muted">Quick and reliable delivery service to your doorstep.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card h-100">
+                    <div class="card-body text-center p-4">
+                        <div class="feature-icon mb-3">
+                            <i class="fas fa-user-md"></i>
+                        </div>
+                        <h5 class="card-title">Expert Support</h5>
+                        <p class="card-text text-muted">Professional healthcare advice and support when you need it.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- How It Works Section -->
+    <!-- <div class="how-it-works-section mb-5">
+        <h2 class="text-center mb-4">How It Works</h2>
+        <div class="row g-4">
+            <div class="col-md-3">
+                <div class="card h-100">
+                    <div class="card-body text-center p-4">
+                        <div class="step-number mb-3">1</div>
+                        <h5 class="card-title">Sign Up</h5>
+                        <p class="card-text text-muted">Create your account in minutes</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card h-100">
+                    <div class="card-body text-center p-4">
+                        <div class="step-number mb-3">2</div>
+                        <h5 class="card-title">Upload</h5>
+                        <p class="card-text text-muted">Upload your prescription</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card h-100">
+                    <div class="card-body text-center p-4">
+                        <div class="step-number mb-3">3</div>
+                        <h5 class="card-title">Order</h5>
+                        <p class="card-text text-muted">Select your medications</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card h-100">
+                    <div class="card-body text-center p-4">
+                        <div class="step-number mb-3">4</div>
+                        <h5 class="card-title">Receive</h5>
+                        <p class="card-text text-muted">Get delivery at your door</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div> -->
+
+    <!-- CTA Section -->
+    <div class="cta-section text-center mb-5">
+        <div class="card bg-primary text-white">
+            <div class="card-body p-5">
+                <h2 class="mb-4">Ready to Get Started?</h2>
+                <p class="lead mb-4">Join thousands of satisfied customers who trust our pharmacy services.</p>
+                <a href="{{ url_for('register') }}" class="btn btn-light btn-lg px-4">
+                    Create Account
+                    <i class="fas fa-arrow-right ms-2"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+// Add smooth scroll for anchor links
+document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+    anchor.addEventListener('click', function (e) {
+        e.preventDefault();
+        document.querySelector(this.getAttribute('href')).scrollIntoView({
+            behavior: 'smooth'
+        });
+    });
+});
+</script>
+{% endblock %} 

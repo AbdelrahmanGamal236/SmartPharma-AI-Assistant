@@ -1,0 +1,175 @@
+{% extends "base.html" %}
+
+{% block title %}Manage Prescriptions - Admin{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>Manage Prescriptions</h2>
+        <a href="{{ url_for('admin_dashboard') }}" class="btn btn-outline-primary">
+            <i class="fas fa-arrow-left me-2"></i>Back to Dashboard
+        </a>
+    </div>
+
+    <!-- Prescriptions Table -->
+    <div class="card shadow-sm">
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>User</th>
+                            <th>File</th>
+                            <th>Message</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for prescription in prescriptions %}
+                        <tr>
+                            <td>{{ prescription.upload_date.strftime('%Y-%m-%d %H:%M') }}</td>
+                            <td>
+                                <div>{{ prescription.user.first_name }} {{ prescription.user.last_name }}</div>
+                                <small class="text-muted">{{ prescription.user.email }}</small>
+                            </td>
+                            <td>
+                                <div class="d-flex align-items-center">
+                                    {% if prescription.original_filename.lower().endswith(('.jpg', '.jpeg', '.png')) %}
+                                    <i class="fas fa-file-image text-primary me-2"></i>
+                                    {% else %}
+                                    <i class="fas fa-file-pdf text-danger me-2"></i>
+                                    {% endif %}
+                                    <div>
+                                        <div>{{ prescription.original_filename }}</div>
+                                        <a href="{{ url_for('download_prescription', prescription_id=prescription.id) }}" 
+                                           class="btn btn-link btn-sm text-decoration-none p-0">
+                                            <i class="fas fa-download me-1"></i>Download
+                                        </a>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>
+                                {% if prescription.message %}
+                                <p class="mb-0">{{ prescription.message }}</p>
+                                {% else %}
+                                <span class="text-muted">No message</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if prescription.status == 'pending' %}
+                                <span class="badge bg-warning text-dark">Pending Review</span>
+                                {% elif prescription.status == 'approved' %}
+                                <span class="badge bg-success">Approved</span>
+                                {% else %}
+                                <span class="badge bg-danger">Rejected</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                <a href="{{ url_for('review_prescription', prescription_id=prescription.id) }}" 
+                                   class="btn btn-primary btn-sm">
+                                    <i class="fas fa-edit me-1"></i>Review
+                                </a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% if not prescriptions %}
+            <div class="text-center py-4">
+                <i class="fas fa-file-medical fa-3x text-muted mb-3"></i>
+                <p class="text-muted">No prescriptions to review</p>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %} 
+
+{% block scripts %}
+<script>
+// Store modal instance
+let currentModal = null;
+
+// Function to handle review button click
+function openReviewModal(modalId) {
+    if (currentModal) {
+        currentModal.hide();
+    }
+    const modalElement = document.getElementById(modalId);
+    currentModal = new bootstrap.Modal(modalElement, {
+        backdrop: 'static',
+        keyboard: false
+    });
+    currentModal.show();
+}
+
+// Add event listeners to all modals
+document.addEventListener('DOMContentLoaded', function() {
+    const modals = document.querySelectorAll('.modal');
+    modals.forEach(modal => {
+        modal.addEventListener('hidden.bs.modal', function() {
+            // Clear form fields if needed
+            const form = this.querySelector('form');
+            if (form) {
+                // Don't reset status and notes to preserve changes
+                // form.reset();
+            }
+        });
+
+        modal.addEventListener('show.bs.modal', function() {
+            // Ensure only one modal is open at a time
+            if (currentModal && currentModal._element !== this) {
+                currentModal.hide();
+            }
+        });
+    });
+});
+
+// Update the button click handler in the table
+document.querySelectorAll('[data-bs-toggle="modal"]').forEach(button => {
+    button.addEventListener('click', function(e) {
+        e.preventDefault();
+        const modalId = this.getAttribute('data-bs-target').substring(1);
+        openReviewModal(modalId);
+    });
+});
+</script>
+
+<style>
+/* Prevent modal from shifting content */
+body {
+    padding-right: 0 !important;
+}
+
+/* Prevent modal backdrop flicker */
+.modal-backdrop {
+    transition: opacity 0.15s linear;
+}
+
+/* Smooth modal animation */
+.modal.fade .modal-dialog {
+    transition: transform 0.2s ease-out;
+}
+
+/* Prevent content shift when modal opens */
+.modal {
+    padding-right: 0 !important;
+}
+
+/* Keep modal centered */
+.modal-dialog {
+    display: flex;
+    align-items: center;
+    min-height: calc(100% - 1rem);
+}
+
+/* Ensure modal content doesn't jump */
+.modal-content {
+    border: none;
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+}
+</style>
+{% endblock %} 

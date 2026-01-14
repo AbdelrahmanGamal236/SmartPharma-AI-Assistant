@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Patient Details - {{ patient.name }}</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="{{ url_for('static', filename='style.css') }}" rel="stylesheet">
+</head>
+<body>
+    <div class="dose-calculator-app">
+        <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+            <div class="container">
+                <a class="navbar-brand" href="{{ url_for('index') }}">
+                    <i class="fas fa-pills me-2"></i>
+                    Advanced Dose Calculator
+                </a>
+                <div class="navbar-nav ms-auto">
+                    <a class="nav-link" href="{{ url_for('index') }}">
+                        <i class="fas fa-arrow-left me-1"></i>Back to Calculator
+                    </a>
+                </div>
+            </div>
+        </nav>
+
+        <div class="container mt-4">
+            <!-- Patient Header -->
+            <div class="row mb-4">
+                <div class="col-12">
+                    <div class="card bg-primary text-white">
+                        <div class="card-body">
+                            <div class="row align-items-center">
+                                <div class="col-md-8">
+                                    <h2 class="mb-1">
+                                        <i class="fas fa-user-injured me-2"></i>
+                                        {{ patient.name }}
+                                    </h2>
+                                    <p class="mb-0">
+                                        <i class="fas fa-calendar me-2"></i>
+                                        Record created: {{ patient.created_at.strftime('%B %d, %Y at %I:%M %p') if patient.created_at else 'N/A' }}
+                                    </p>
+                                </div>
+                                <div class="col-md-4 text-md-end">
+                                    <button class="btn btn-light btn-lg" onclick="window.print()">
+                                        <i class="fas fa-print me-2"></i>Print Record
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <!-- Patient Information -->
+                <div class="col-md-6 mb-4">
+                    <div class="card h-100">
+                        <div class="card-header bg-info text-white">
+                            <h5 class="mb-0">
+                                <i class="fas fa-user me-2"></i>Patient Information
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            <table class="table table-borderless">
+                                <tbody>
+                                    <tr>
+                                        <th width="40%">Name:</th>
+                                        <td><strong>{{ patient.name }}</strong></td>
+                                    </tr>
+                                    <tr>
+                                        <th>Age:</th>
+                                        <td>{{ patient.age }} years</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Weight:</th>
+                                        <td>{{ patient.weight }} kg</td>
+                                    </tr>
+                                    {% if patient.height %}
+                                    <tr>
+                                        <th>Height:</th>
+                                        <td>{{ patient.height }} cm</td>
+                                    </tr>
+                                    <tr>
+                                        <th>BMI:</th>
+                                        <td>
+                                            {% set bmi = (patient.weight / ((patient.height/100) ** 2)) | round(1) %}
+                                            {{ bmi }} kg/m²
+                                            {% if bmi < 18.5 %}
+                                                <span class="badge bg-warning">Underweight</span>
+                                            {% elif bmi < 25 %}
+                                                <span class="badge bg-success">Normal</span>
+                                            {% elif bmi < 30 %}
+                                                <span class="badge bg-warning">Overweight</span>
+                                            {% else %}
+                                                <span class="badge bg-danger">Obese</span>
+                                            {% endif %}
+                                        </td>
+                                    </tr>
+                                    {% endif %}
+                                    <tr>
+                                        <th>Medical Condition:</th>
+                                        <td>
+                                            <span class="badge bg-secondary">
+                                                {{ patient.medical_condition.replace('_', ' ').title() }}
+                                            </span>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th>Severity:</th>
+                                        <td>
+                                            {% if patient.severity == 'mild' %}
+                                                <span class="badge bg-success">{{ patient.severity.title() }}</span>
+                                            {% elif patient.severity == 'moderate' %}
+                                                <span class="badge bg-warning">{{ patient.severity.title() }}</span>
+                                            {% elif patient.severity == 'severe' %}
+                                                <span class="badge bg-danger">{{ patient.severity.title() }}</span>
+                                            {% else %}
+                                                <span class="badge bg-dark">{{ patient.severity.title() }}</span>
+                                            {% endif %}
+                                        </td>
+                                    </tr>
+                                    {% if patient.allergies %}
+                                    <tr>
+                                        <th>Allergies:</th>
+                                        <td>
+                                            <div class="alert alert-warning alert-sm mb-0">
+                                                <i class="fas fa-exclamation-triangle me-1"></i>
+                                                {{ patient.allergies }}
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    {% endif %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Medication Information -->
+                <div class="col-md-6 mb-4">
+                    <div class="card h-100">
+                        <div class="card-header bg-success text-white">
+                            <h5 class="mb-0">
+                                <i class="fas fa-pills me-2"></i>Medication Details
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            <table class="table table-borderless">
+                                <tbody>
+                                    <tr>
+                                        <th width="40%">Drug Name:</th>
+                                        <td><strong>{{ patient.drug_name }}</strong></td>
+                                    </tr>
+                                    <tr>
+                                        <th>Calculated Dose:</th>
+                                        <td>
+                                            <span class="h5 text-success">{{ patient.result }}</span>
+                                        </td>
+                                    </tr>
+                                    {% if patient.dose_form %}
+                                    <tr>
+                                        <th>Dosage Form:</th>
+                                        <td>{{ patient.dose_form }}</td>
+                                    </tr>
+                                    {% endif %}
+                                    {% if patient.frequency %}
+                                    <tr>
+                                        <th>Frequency:</th>
+                                        <td>{{ patient.frequency }}</td>
+                                    </tr>
+                                    {% endif %}
+                                    {% if patient.duration %}
+                                    <tr>
+                                        <th>Duration:</th>
+                                        <td>{{ patient.duration }}</td>
+                                    </tr>
+                                    {% endif %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Instructions and Warnings -->
+            {% if patient.instructions or patient.warnings %}
+            <div class="row">
+                {% if patient.instructions %}
+                <div class="col-md-6 mb-4">
+                    <div class="card">
+                        <div class="card-header bg-primary text-white">
+                            <h5 class="mb-0">
+                                <i class="fas fa-list-ul me-2"></i>Administration Instructions
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="alert alert-info">
+                                <i class="fas fa-info-circle me-2"></i>
+                                {{ patient.instructions }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+
+                {% if patient.warnings %}
+                <div class="col-md-6 mb-4">
+                    <div class="card">
+                        <div class="card-header bg-warning text-dark">
+                            <h5 class="mb-0">
+                                <i class="fas fa-exclamation-triangle me-2"></i>Warnings & Precautions
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="alert alert-warning">
+                                <i class="fas fa-exclamation-triangle me-2"></i>
+                                {{ patient.warnings }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+            {% endif %}
+
+            <!-- Medical Disclaimer -->
+            <div class="row">
+                <div class="col-12">
+                    <div class="card border-danger">
+                        <div class="card-header bg-danger text-white">
+                            <h5 class="mb-0">
+                                <i class="fas fa-exclamation-circle me-2"></i>Important Medical Disclaimer
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            <p class="mb-2">
+                                <strong>This dose calculation is for informational purposes only and should not replace professional medical advice.</strong>
+                            </p>
+                            <ul class="mb-0">
+                                <li>Always consult with a qualified healthcare professional before administering any medication</li>
+                                <li>Verify all calculations and dosages with current medical guidelines</li>
+                                <li>Consider patient-specific factors that may affect dosing</li>
+                                <li>Monitor for adverse reactions and adjust as necessary</li>
+                                <li>This system provides estimates based on general guidelines and AI analysis</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="row mt-4">
+                <div class="col-12 text-center">
+                    <a href="{{ url_for('index') }}" class="btn btn-primary btn-lg me-3">
+                        <i class="fas fa-calculator me-2"></i>Calculate New Dose
+                    </a>
+                    <button class="btn btn-outline-secondary btn-lg" onclick="window.print()">
+                        <i class="fas fa-print me-2"></i>Print This Record
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Print Styles -->
+    <style media="print">
+        .navbar, .btn, .no-print { display: none !important; }
+        .card { border: 1px solid #000 !important; page-break-inside: avoid; }
+        .card-header { background-color: #f8f9fa !important; color: #000 !important; }
+        .alert { border: 1px solid #000 !important; }
+        .badge { border: 1px solid #000 !important; }
+        body { font-size: 12pt; }
+        h2, h5 { color: #000 !important; }
+    </style>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

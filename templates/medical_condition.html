@@ -1,0 +1,128 @@
+{% extends "base.html" %}
+
+{% block title %}Medical Information Assistant{% endblock %}
+
+{% block content %}
+<div class="medical-info-app my-5">
+    <div class="medical-info-card">
+        <div class="medical-info-header text-center">
+            <h1>Medical Information Assistant</h1>
+            <p class="subtitle">
+                Get information about symptoms, diseases, treatments, and medical advice
+            </p>
+        </div>
+
+        <div class="search-container">
+            <form id="medicalSearchForm">
+                <div class="search-input-container">
+                    <input type="text" id="query" name="query" placeholder="Enter your symptoms or a medical condition..." required>
+                    <select id="search_type" name="search_type">
+                        <option value="symptoms">Symptoms</option>
+                        <option value="disease">Disease</option>
+                    </select>
+                    <button type="submit">Search</button>
+                </div>
+                <div class="search-type-explanation">
+                    <p><strong>Symptoms Search:</strong> Describe how you're feeling to find possible conditions</p>
+                    <p><strong>Disease Search:</strong> Enter a medical condition to learn more about it</p>
+                </div>
+            </form>
+        </div>
+
+        <div id="loading" class="loading">
+            <div class="spinner"></div>
+            <p>Searching medical database...</p>
+        </div>
+
+        <div id="result" class="result-container">
+            <h2 id="result-title"></h2>
+            <div id="result-content"></div>
+        </div>
+
+        <div class="examples">
+            <h3>Example Searches</h3>
+            <div class="example-container">
+                <div class="example-card symptoms">
+                    <h4>Symptoms Examples</h4>
+                    <ul>
+                        <li><a href="#" class="example-link" data-type="symptoms">Fever, headache, and sore throat</a></li>
+                        <li><a href="#" class="example-link" data-type="symptoms">Chest pain and shortness of breath</a></li>
+                        <li><a href="#" class="example-link" data-type="symptoms">Persistent cough with yellow mucus</a></li>
+                    </ul>
+                </div>
+                <div class="example-card diseases">
+                    <h4>Disease Examples</h4>
+                    <ul>
+                        <li><a href="#" class="example-link" data-type="disease">Diabetes</a></li>
+                        <li><a href="#" class="example-link" data-type="disease">Hypertension</a></li>
+                        <li><a href="#" class="example-link" data-type="disease">Migraine</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <footer>
+            <p>Disclaimer: This tool provides general information only and should not replace professional medical advice. Always consult a healthcare provider for diagnosis and treatment.</p>
+        </footer>
+    </div>
+</div>
+
+<script>
+    // Your existing JS
+    document.getElementById('medicalSearchForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        performSearch();
+    });
+    document.querySelectorAll('.example-link').forEach(link => {
+        link.addEventListener('click', function(e) {
+            e.preventDefault();
+            const query = this.textContent;
+            const searchType = this.getAttribute('data-type');
+            document.getElementById('query').value = query;
+            document.getElementById('search_type').value = searchType;
+            performSearch();
+        });
+    });
+    function performSearch() {
+        const query = document.getElementById('query').value;
+        const searchType = document.getElementById('search_type').value;
+        const loadingDiv = document.getElementById('loading');
+        const resultDiv = document.getElementById('result');
+        const resultTitle = document.getElementById('result-title');
+        const resultContent = document.getElementById('result-content');
+        loadingDiv.style.display = 'flex';
+        resultDiv.style.display = 'none';
+        const formData = new FormData();
+        formData.append('query', query);
+        formData.append('search_type', searchType);
+        fetch('/search_medical_info', {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json();
+        })
+        .then(data => {
+            loadingDiv.style.display = 'none';
+            if (searchType === 'symptoms') {
+                resultTitle.textContent = `Results for symptoms: "${query}"`;
+            } else {
+                resultTitle.textContent = `Information about: ${query}`;
+            }
+            resultContent.innerHTML = data.final_answer.replace(/\n/g, '<br>');
+            resultDiv.style.display = 'block';
+            resultDiv.scrollIntoView({ behavior: 'smooth' });
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            loadingDiv.style.display = 'none';
+            resultTitle.textContent = 'Error';
+            resultContent.innerHTML = 'An error occurred while searching for medical information. Please try again.';
+            resultDiv.style.display = 'block';
+        });
+    }
+</script>
+{% endblock %}
